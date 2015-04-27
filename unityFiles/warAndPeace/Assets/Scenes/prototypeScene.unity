@@ -96,6 +96,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 451427421}
   - 212: {fileID: 451427420}
+  - 114: {fileID: 451427422}
   m_Layer: 0
   m_Name: background
   m_TagString: Untagged
@@ -141,6 +142,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
+--- !u!114 &451427422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 451427419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e23af6b8efbdec40a08c540f6b6bdbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creepsprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  SPAWNDELAY: 1
 --- !u!1 &712650565
 GameObject:
   m_ObjectHideFlags: 0
