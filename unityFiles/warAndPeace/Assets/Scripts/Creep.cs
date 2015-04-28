@@ -7,14 +7,16 @@ public class Creep : MonoBehaviour {
 	public MapBehavior map;
 	private IList<Vector2> path;
 	private bool valid;
-	private bool dead;
+	public bool dead;
 	private int waypoint;
 	private int pathpoint;
+	public float health;
 	// Use this for initialization
 	void Start () {
 		valid = false;
 		dead = false;
 		waypoint = 0;
+		health = 100;
 		getWaypoint();
 	}
 
@@ -50,6 +52,18 @@ public class Creep : MonoBehaviour {
 		{
 			Vector2 dir = path[pathpoint] - (Vector2)gameObject.transform.position;
 			gameObject.transform.position += (Vector3)dir.normalized*v;
+		}
+	}
+
+	public void damage(float dmg)
+	{
+		health -= dmg;
+		//gameObject.GetComponent<SpriteRenderer>().color.r = (int)(255*health/100.0);
+		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/100.0f);
+		if (health <= 0)
+		{
+			dead = true;
+
 		}
 	}
 }

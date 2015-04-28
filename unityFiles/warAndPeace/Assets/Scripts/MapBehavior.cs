@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class MapBehavior : MonoBehaviour {
 
 	private IList<Vector2> waypoints;
-	private IList<Creep> creeps;
+	public IList<Creep> creeps;
 	int wave;
 	bool spawned;
 	public Sprite creepsprite;
