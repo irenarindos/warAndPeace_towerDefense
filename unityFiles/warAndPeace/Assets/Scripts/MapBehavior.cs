@@ -31,6 +31,16 @@ public class MapBehavior : MonoBehaviour {
 		waypoints.Add(new Vector2(11f,-1.2f));
 		spawned = false;
 	}
+
+	public TowerBehavior selectedTower;
+
+	public void upgrade(int what)
+	{
+		if (selectedTower != null)
+		{
+			selectedTower.upgrade(what);
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {

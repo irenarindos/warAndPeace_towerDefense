@@ -14,6 +14,16 @@ public class TowerModule  {
 
 	}
 
+	virtual public bool canUpgrade()
+	{
+		return false;
+	}
+
+	virtual public int getUpgradeCost()
+	{
+		return 0;
+	}
+
 	virtual public int getPriority()
 	{
 		return 1;
@@ -62,27 +72,59 @@ public class BasicModule : TowerModule  {
 // increase range
 public class ScopeModule : TowerModule  {
 
-	private float percent = 1.1f;
+	private float percent = 1.0f;
 
 	override public float getRange(float range)
 	{
 		return range*percent;
 	}
 
-	public static int cost = 25;
+	private int cost = 20;
+	
+	override public void upgrade()
+	{
+		percent *= 1.1f;
+		cost *= 2;
+	}
+	
+	override public bool canUpgrade()
+	{
+		return true;
+	}
+	
+	override public int getUpgradeCost()
+	{
+		return cost;
+	}
 }
 
 // increase damage
 public class BombModule : TowerModule  {
 	
-	private float percent = 1.1f;
+	private float percent = 1.0f;
 	
 	override public float getDamage(float damage)
 	{
 		return damage*percent;
 	}
 
-	public static int cost = 20;
+	private int cost = 30;
+	
+	override public void upgrade()
+	{
+		percent *= 1.25f;
+		cost *= 2;
+	}
+	
+	override public bool canUpgrade()
+	{
+		return true;
+	}
+	
+	override public int getUpgradeCost()
+	{
+		return cost;
+	}
 }
 
 // decrease fire delay
@@ -95,5 +137,21 @@ public class GearModule : TowerModule  {
 		return delay*percent;
 	}
 
-	public static int cost = 25;
+	private int cost = 25;
+
+	override public void upgrade()
+	{
+		percent *= 0.9f;
+		cost *= 2;
+	}
+	
+	override public bool canUpgrade()
+	{
+		return true;
+	}
+	
+	override public int getUpgradeCost()
+	{
+		return cost;
+	}
 }

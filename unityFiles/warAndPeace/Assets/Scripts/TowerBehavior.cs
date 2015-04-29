@@ -7,6 +7,7 @@ public class TowerBehavior : MonoBehaviour {
 	public float DAMAGE;
 	public float RANGE;
 	public float lastShot;
+	public bool selected = true;
 	public enum TargetingStrategy
 	{
 		FIRSTINRANGE,
@@ -26,6 +27,9 @@ public class TowerBehavior : MonoBehaviour {
 	void Start () {
 		modules = new List<TowerModule>();
 		addModule<BasicModule>();
+		addModule<GearModule>();
+		addModule<ScopeModule>();
+		addModule<BombModule>();
 		lastShot = Time.time;
 
 	    rangeIndicator = new GameObject("range indicator");
@@ -35,6 +39,15 @@ public class TowerBehavior : MonoBehaviour {
 		rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
 		rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
 
+	}
+
+	public void upgrade(int what)
+	{
+		if (map.resources >= modules[what].getUpgradeCost() && modules[what].canUpgrade())
+		{
+			map.resources -= modules[what].getUpgradeCost();
+			modules[what].upgrade();
+		}
 	}
 
 	void addModule<T>() where T: TowerModule, new()
@@ -61,24 +74,13 @@ public class TowerBehavior : MonoBehaviour {
 				lastShot = Time.time;
 			}
 		}
-		if (Input.GetButtonDown("Jump") && map.resources >= ScopeModule.cost)
+		if (selected)
 		{
-			addModule<ScopeModule>();
-			map.resources -= ScopeModule.cost;
+			rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
+			rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
+			map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay() + "; DPS: " + getDamage()/getShootDelay();
+
 		}
-		else if (Input.GetButtonDown("Fire1") && map.resources >= BombModule.cost)
-		{
-			addModule<BombModule>();
-			map.resources -= BombModule.cost;
-		}
-		else if (Input.GetButtonDown("Fire2") && map.resources >= GearModule.cost)
-		{
-			addModule<GearModule>();
-			map.resources -= GearModule.cost;
-		}
-		rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
-		rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
-		map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay();
 	}
 
 	void acquireTarget()
