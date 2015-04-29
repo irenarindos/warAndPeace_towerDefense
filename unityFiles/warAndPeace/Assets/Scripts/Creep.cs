@@ -10,13 +10,14 @@ public class Creep : MonoBehaviour {
 	public bool dead;
 	private int waypoint;
 	private int pathpoint;
-	public float health;
+	public float health = 100;
+	public float maxHealth = 100;
+	public int value = 5;
 	// Use this for initialization
 	void Start () {
 		valid = false;
 		dead = false;
 		waypoint = 0;
-		health = 100;
 		getWaypoint();
 	}
 
@@ -33,7 +34,18 @@ public class Creep : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (path == null || dead) return;
+		if (dead)
+		{
+			if (health <= 0)
+			    map.resources += value;
+		    else
+				map.lives -= 1;
+			map.removeCreep(this);
+			gameObject.SetActive(false);
+			Destroy (gameObject, 1);
+			return;
+		}
+		if (path == null) return;
 		float v = 1.0f; 
 		v *= Time.deltaTime;
 		if ((((Vector2)gameObject.transform.position - path[pathpoint]).magnitude < TARGETDIST) || !valid)
@@ -59,11 +71,10 @@ public class Creep : MonoBehaviour {
 	{
 		health -= dmg;
 		//gameObject.GetComponent<SpriteRenderer>().color.r = (int)(255*health/100.0);
-		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/100.0f);
+		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/maxHealth);
 		if (health <= 0)
 		{
 			dead = true;
-
 		}
 	}
 }

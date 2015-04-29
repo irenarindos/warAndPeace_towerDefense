@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class MapBehavior : MonoBehaviour {
@@ -9,6 +10,12 @@ public class MapBehavior : MonoBehaviour {
 	bool spawned;
 	public Sprite creepsprite;
 	public float SPAWNDELAY;
+	public int resources = 100;
+	public Text restext;
+	public Text towertext;
+	public Text lifewavetext;
+	public int lives;
+	private bool running = true;
 	// Use this for initialization
 	void Start () {
 		wave = 0;
@@ -27,6 +34,7 @@ public class MapBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!running) return;
 		if (creeps.Count == 0)
 		{
 			spawned = false;
@@ -40,7 +48,19 @@ public class MapBehavior : MonoBehaviour {
 			}
 			spawned = true;
 		}
+		restext.text = "Resources: " + resources;
+		lifewavetext.text = "Lives: " + lives + "; wave: " + wave;
+		if (lives <= 0)
+		{
+			restext.text = "You lost";
+			restext.fontSize = 72;
+			running = false;
+		}
+	}
 
+	public void removeCreep(Creep creep)
+	{
+		creeps.Remove(creep);
 	}
 
 	public IList<Vector2> getPathToWaypoint(int index, Vector2 origin)
@@ -59,6 +79,9 @@ public class MapBehavior : MonoBehaviour {
 		rend.sprite = creepsprite; 
 		newcreep = go.AddComponent<Creep>();
 		newcreep.map = this;
+		newcreep.health = 100 + 25*wave;
+		newcreep.maxHealth = 100 + 25*wave;
+		newcreep.value = wave;
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
 	}
