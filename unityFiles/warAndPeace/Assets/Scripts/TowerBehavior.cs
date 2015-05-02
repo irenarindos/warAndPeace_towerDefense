@@ -7,7 +7,8 @@ public class TowerBehavior : MonoBehaviour {
 	public float DAMAGE;
 	public float RANGE;
 	public float lastShot;
-	public bool selected = true;
+	public bool selected = false;
+	public bool isBuilt = false;
 	public enum TargetingStrategy
 	{
 		FIRSTINRANGE,
@@ -21,7 +22,7 @@ public class TowerBehavior : MonoBehaviour {
 	public TargetingStrategy targetingStrategy;
 	public Creep target;
 	public MapBehavior map;
-	private GameObject rangeIndicator;
+	public GameObject rangeIndicator;
 
 	// Use this for initialization
 	void Start () {
@@ -61,6 +62,12 @@ public class TowerBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (selected || !isBuilt)
+		{
+			rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
+			rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
+		}
+		if (!isBuilt) return;
 		if (target != null && ((target.transform.position - gameObject.transform.position).magnitude > getRange() || target.dead))
 		{
 			target = null;
@@ -74,10 +81,8 @@ public class TowerBehavior : MonoBehaviour {
 				lastShot = Time.time;
 			}
 		}
-		if (selected)
-		{
-			rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
-			rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
+        if (selected)
+	    {
 			map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay() + "; DPS: " + getDamage()/getShootDelay();
 
 		}
@@ -132,5 +137,19 @@ public class TowerBehavior : MonoBehaviour {
 			range = mod.getRange(range);
 		}
 		return range;
+	}
+
+	public void OnMouseDown()
+	{
+		if (isBuilt)
+		{
+		    map.selectedTower.selected = false;
+		    map.selectedTower = this;
+		    this.selected = true;
+		}
+		else
+		{
+			map.onMouseDown();
+		}
 	}
 }

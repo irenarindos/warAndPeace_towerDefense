@@ -16,6 +16,9 @@ public class MapBehavior : MonoBehaviour {
 	public Text lifewavetext;
 	public int lives;
 	private bool running = true;
+	private bool buildingTower = false;
+	private GameObject newTower;
+	public GameObject towerTemplate;
 	// Use this for initialization
 	void Start () {
 		wave = 0;
@@ -66,6 +69,14 @@ public class MapBehavior : MonoBehaviour {
 			restext.fontSize = 72;
 			running = false;
 		}
+		if (buildingTower)
+		{
+
+			Vector3 mousePosition = Input.mousePosition;
+			mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+			newTower.transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
+			//transform.position = Vector2.Lerp(transform.position, mousePosition, moveSpeed);
+		}
 	}
 
 	public void removeCreep(Creep creep)
@@ -94,5 +105,22 @@ public class MapBehavior : MonoBehaviour {
 		newcreep.value = wave;
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
+	}
+
+	public void startTowerBuild()
+	{
+		newTower = Instantiate (towerTemplate);
+		newTower.GetComponent<TowerBehavior>().map = this;
+		buildingTower = true;
+	}
+
+	public void onMouseDown()
+	{
+		if (buildingTower)
+		{
+			buildingTower = false;
+			newTower.GetComponent<TowerBehavior>().map = this;
+			newTower.GetComponent<TowerBehavior>().isBuilt = true;
+		}
 	}
 }
