@@ -119,7 +119,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 457, y: -197}
+  m_AnchoredPosition: {x: 380, y: -197}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &46684073
@@ -462,7 +462,7 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 528, y: -197}
+  m_AnchoredPosition: {x: 451, y: -197}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &571087668
@@ -774,7 +774,7 @@ GameObject:
   - 114: {fileID: 1202895975}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -969,7 +969,7 @@ RectTransform:
   m_RootOrder: 6
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 357, y: -197}
+  m_AnchoredPosition: {x: 280, y: -197}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1574223775 stripped
@@ -1060,7 +1060,7 @@ RectTransform:
   m_RootOrder: 4
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 493, y: -197}
+  m_AnchoredPosition: {x: 416, y: -197}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &2096795561

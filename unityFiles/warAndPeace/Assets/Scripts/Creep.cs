@@ -13,12 +13,17 @@ public class Creep : MonoBehaviour {
 	public float health = 100;
 	public float maxHealth = 100;
 	public int value = 5;
-	// Use this for initialization
+
+	private GameObject healthIndicator;
+	/// Use this for initialization
 	void Start () {
 		valid = false;
 		dead = false;
 		waypoint = 0;
 		getWaypoint();
+		healthIndicator = (GameObject)Instantiate(Resources.Load("healthBar"));
+		healthIndicator.transform.position = gameObject.transform.position;
+		healthIndicator.transform.SetParent (gameObject.transform);//this;//gameObject;
 	}
 
 	void getWaypoint()
@@ -65,6 +70,15 @@ public class Creep : MonoBehaviour {
 			Vector2 dir = path[pathpoint] - (Vector2)gameObject.transform.position;
 			gameObject.transform.position += (Vector3)dir.normalized*v;
 		}
+		drawHealthBar ();
+	}
+
+	//Draw a health bar above the creep
+	//Red is damage taken, green is health left
+	private void drawHealthBar(){
+		float damage = health / maxHealth;
+		healthBar hb = (healthBar)healthIndicator.GetComponent<healthBar> ();
+		hb.setHealthPercent(damage);
 	}
 
 	public void damage(float dmg)
