@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class MapBehavior : MonoBehaviour {
 
 	private IList<Vector2> waypoints;
+	private IList<TowerBehavior> towers;
 	public IList<Creep> creeps;
 	int wave;
 	bool spawned;
@@ -19,10 +20,12 @@ public class MapBehavior : MonoBehaviour {
 	private bool buildingTower = false;
 	private GameObject newTower;
 	public GameObject towerTemplate;
+	private int[,] groundProperties;
 	// Use this for initialization
 	void Start () {
 		wave = 0;
 		creeps = new List<Creep>();
+		towers = new List<TowerBehavior>();
 		waypoints = new List<Vector2>();
 		waypoints.Add(new Vector2(0f,5f));
 		waypoints.Add(new Vector2(-1f,1.2f));
@@ -33,6 +36,25 @@ public class MapBehavior : MonoBehaviour {
 		waypoints.Add(new Vector2(6f,-1.2f));
 		waypoints.Add(new Vector2(11f,-1.2f));
 		spawned = false;
+		groundProperties = new int[50,25];
+		groundProperties[13,16] = 1;
+		groundProperties[14,16] = 1;
+		groundProperties[17,9] = 1;
+		groundProperties[18,9] = 1;
+		groundProperties[19,9] = 1;
+		groundProperties[17,17] = 1;
+		groundProperties[18,17] = 1;
+		groundProperties[18,11] = 1;
+		groundProperties[18,12] = 1;
+		groundProperties[19,11] = 1;
+		groundProperties[19,12] = 1;
+		groundProperties[26,5] = 1;
+		groundProperties[27,5] = 1;
+		groundProperties[31,9] = 1;
+		groundProperties[32,9] = 1;
+		groundProperties[38,6] = 1;
+		groundProperties[39,6] = 1;
+		groundProperties[40,6] = 1;
 	}
 
 	public TowerBehavior selectedTower;
@@ -71,11 +93,21 @@ public class MapBehavior : MonoBehaviour {
 		}
 		if (buildingTower)
 		{
-
 			Vector3 mousePosition = Input.mousePosition;
 			mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-			newTower.transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
-			//transform.position = Vector2.Lerp(transform.position, mousePosition, moveSpeed);
+			newTower.transform.position = gameObject.GetComponent<BuildHelper>().getClosestDot((Vector2)mousePosition);
+			if (resources < 50)
+			{
+				newTower.GetComponent<SpriteRenderer>().color = Color.red;
+			}
+			else
+			{
+				newTower.GetComponent<SpriteRenderer>().color = Color.blue;
+			}
+		}
+		if (selectedTower)
+		{
+			selectedTower.showStats();
 		}
 	}
 
@@ -109,18 +141,54 @@ public class MapBehavior : MonoBehaviour {
 
 	public void startTowerBuild()
 	{
-		newTower = Instantiate (towerTemplate);
-		newTower.GetComponent<TowerBehavior>().map = this;
-		buildingTower = true;
-	}
 
-	public void onMouseDown()
-	{
 		if (buildingTower)
 		{
 			buildingTower = false;
-			newTower.GetComponent<TowerBehavior>().map = this;
-			newTower.GetComponent<TowerBehavior>().isBuilt = true;
+			Destroy (newTower);
+			gameObject.GetComponent<BuildHelper>().unpopulate();
+			return;
+		}
+		if (selectedTower) selectedTower.unselect();
+		newTower = Instantiate (towerTemplate);
+		newTower.GetComponent<TowerBehavior>().map = this;
+		buildingTower = true;
+
+		gameObject.GetComponent<BuildHelper>().populate(groundProperties);
+	}
+
+	public void OnMouseDown()
+	{
+
+
+		if (buildingTower)
+		{
+			DotProperty prop = gameObject.GetComponent<BuildHelper>().getBuildProperty((Vector2)newTower.transform.position);
+			if (prop.buildable == 1 && resources >= 50)
+			{
+				buildingTower = false;
+				newTower.GetComponent<TowerBehavior>().map = this;
+				newTower.GetComponent<TowerBehavior>().isBuilt = true;
+				towers.Add(newTower.GetComponent<TowerBehavior>());
+				newTower.GetComponent<TowerBehavior>().select();
+				groundProperties[prop.i,prop.j] = 0;
+				gameObject.GetComponent<BuildHelper>().unpopulate();
+				resources -= 50;
+			}
+		}
+		else
+		{
+			Vector3 mousePosition = Input.mousePosition;
+			mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+			Vector3 pos = new Vector3(mousePosition.x, mousePosition.y, 0);
+			foreach (TowerBehavior t in towers)
+			{
+				if ((t.gameObject.transform.position - pos).magnitude < 0.15)
+				{
+					t.select();
+				}
+			}
+			
 		}
 	}
 }

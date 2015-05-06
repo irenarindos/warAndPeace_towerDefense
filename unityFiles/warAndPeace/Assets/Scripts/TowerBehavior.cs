@@ -67,6 +67,9 @@ public class TowerBehavior : MonoBehaviour {
 			rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
 			rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
 		}
+		rangeIndicator.SetActive(selected);
+		
+
 		if (!isBuilt) return;
 		if (target != null && ((target.transform.position - gameObject.transform.position).magnitude > getRange() || target.dead))
 		{
@@ -81,11 +84,11 @@ public class TowerBehavior : MonoBehaviour {
 				lastShot = Time.time;
 			}
 		}
-        if (selected)
-	    {
-			map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay() + "; DPS: " + getDamage()/getShootDelay();
+	}
 
-		}
+	public void showStats()
+	{
+		map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay() + "; DPS: " + getDamage()/getShootDelay();
 	}
 
 	void acquireTarget()
@@ -141,15 +144,29 @@ public class TowerBehavior : MonoBehaviour {
 
 	public void OnMouseDown()
 	{
-		if (isBuilt)
+		/*if (isBuilt)
 		{
-		    map.selectedTower.selected = false;
-		    map.selectedTower = this;
-		    this.selected = true;
+			select ();
 		}
 		else
 		{
-			map.onMouseDown();
+			map.OnMouseDown();
+		}*/
+	}
+
+	public void select()
+	{
+		if (map.selectedTower)
+		{
+			map.selectedTower.selected = false;
 		}
+		map.selectedTower = this;
+		this.selected = true;
+	}
+
+	public void unselect()
+	{
+		this.selected = false;
+		map.selectedTower = null;
 	}
 }

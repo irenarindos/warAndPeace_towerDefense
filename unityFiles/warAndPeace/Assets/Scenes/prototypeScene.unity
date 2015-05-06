@@ -274,7 +274,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
 --- !u!1 &451427419
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,6 +286,7 @@ GameObject:
   - 212: {fileID: 451427420}
   - 114: {fileID: 451427422}
   - 61: {fileID: 451427423}
+  - 114: {fileID: 451427424}
   m_Layer: 0
   m_Name: background
   m_TagString: Untagged
@@ -350,7 +351,7 @@ MonoBehaviour:
   lifewavetext: {fileID: 536792372}
   lives: 10
   towerTemplate: {fileID: 166722, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-  selectedTower: {fileID: 1574223775}
+  selectedTower: {fileID: 0}
 --- !u!61 &451427423
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -364,6 +365,20 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 10.2399998, y: 7.67999983}
+--- !u!114 &451427424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 451427419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c6e7fef0e0ff7b448fc4a57149d9dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  i: 0
+  j: 0
+  dotsprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &536792370
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,7 +438,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 
 --- !u!222 &536792373
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -754,7 +769,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 
 --- !u!222 &1151542710
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -972,62 +987,6 @@ RectTransform:
   m_AnchoredPosition: {x: 280, y: -197}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: .5, y: .5}
---- !u!114 &1574223775 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11429932, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5,
-    type: 2}
-  m_PrefabInternal: {fileID: 2011609942}
-  m_Script: {fileID: 11500000, guid: d9ac65f18956a204690f00ea4b9cd0b1, type: 3}
---- !u!1001 &2011609942
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -2.54999995
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -.230000004
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 470892, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 166722, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: m_Name
-      value: TestTower
-      objectReference: {fileID: 0}
-    - target: {fileID: 11429932, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-      propertyPath: map
-      value: 
-      objectReference: {fileID: 451427422}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &2096795559
 GameObject:
   m_ObjectHideFlags: 0
