@@ -132,9 +132,7 @@ public class MapBehavior : MonoBehaviour {
 		rend.sprite = creepsprite; 
 		newcreep = go.AddComponent<Creep>();
 		newcreep.map = this;
-		newcreep.health = 100 + 25*wave;
-		newcreep.maxHealth = 100 + 25*wave;
-		newcreep.value = wave;
+		newcreep.setType(Creep.CreepType.NORMAL, wave);
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
 	}

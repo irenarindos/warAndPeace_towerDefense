@@ -3,6 +3,15 @@ using System.Collections.Generic;
 
 public class Creep : MonoBehaviour {
 
+	public enum CreepType 
+	{
+		NORMAL,
+		LARGE,
+		BOSS,
+		FAST,
+		SHIELDED
+	}
+
 	private const float TARGETDIST = 0.05f;
 	public MapBehavior map;
 	private IList<Vector2> path;
@@ -10,9 +19,19 @@ public class Creep : MonoBehaviour {
 	public bool dead;
 	private int waypoint;
 	private int pathpoint;
-	public float health = 100;
-	public float maxHealth = 100;
-	public int value = 5;
+	private IList<CreepModule> modules;
+	public float health
+	{
+		get { return getHealth(); }
+	}
+	public float maxHealth
+	{
+		get { return getMaxHealth(); }
+	}
+	public int value 
+	{
+		get { return getValue(); }
+	}
 
 	private GameObject healthIndicator;
 	/// Use this for initialization
@@ -21,9 +40,31 @@ public class Creep : MonoBehaviour {
 		dead = false;
 		waypoint = 0;
 		getWaypoint();
+		if (modules == null) modules = new List<CreepModule>();
 		healthIndicator = (GameObject)Instantiate(Resources.Load("healthBar"));
 		healthIndicator.transform.position = gameObject.transform.position;
 		healthIndicator.transform.SetParent (gameObject.transform);//this;//gameObject;
+	}
+
+	void addModule<T>() where T: CreepModule, new()
+	{
+		T newModule = new T();
+		int i = 0;
+		for (; i < modules.Count && modules[i].getPriority() < newModule.getPriority(); ++i);
+		modules.Insert(i, newModule);
+		newModule.init(this);
+	}
+
+	void addModule(CreepModule newModule) 
+	{
+		int i = 0;
+		if (modules == null)
+		{
+			modules = new List<CreepModule>();
+		}
+		for (; i < modules.Count && modules[i].getPriority() < newModule.getPriority(); ++i);
+		modules.Insert(i, newModule);
+		newModule.init(this);
 	}
 
 	void getWaypoint()
@@ -51,7 +92,7 @@ public class Creep : MonoBehaviour {
 			return;
 		}
 		if (path == null) return;
-		float v = 1.0f; 
+		float v = getSpeed(); 
 		v *= Time.deltaTime;
 		if ((((Vector2)gameObject.transform.position - path[pathpoint]).magnitude < TARGETDIST) || !valid)
 		{
@@ -83,12 +124,62 @@ public class Creep : MonoBehaviour {
 
 	public void damage(float dmg)
 	{
-		health -= dmg;
+		foreach (CreepModule mod in modules)
+		{
+			dmg = mod.damage(dmg);
+		}
+
 		//gameObject.GetComponent<SpriteRenderer>().color.r = (int)(255*health/100.0);
 		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/maxHealth);
 		if (health <= 0)
 		{
 			dead = true;
 		}
+	}
+
+	public float getSpeed()
+	{
+		float result = 0;
+		foreach (CreepModule mod in modules)
+		{
+			result = mod.getSpeed(result);
+		}
+		return result;
+	}
+
+	public float getHealth()
+	{
+		float result = 0;
+		foreach (CreepModule mod in modules)
+		{
+			result = mod.getHealth(result);
+		}
+		return result;
+	}
+
+	public float getMaxHealth()
+	{
+		float result = 0;
+		foreach (CreepModule mod in modules)
+		{
+			result = mod.getMaxHealth(result);
+		}
+		return result;
+	}
+
+	public int getValue()
+	{
+		int result = 0;
+		foreach (CreepModule mod in modules)
+		{
+			result = mod.getValue(result);
+		}
+		return result;
+	}
+
+	public void setType(CreepType t, int wave)
+	{
+		addModule(new NormalCreep(wave));
+
 	}
 }
