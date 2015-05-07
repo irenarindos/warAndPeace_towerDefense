@@ -134,6 +134,7 @@ public class MapBehavior : MonoBehaviour {
 			wavecountdowntext.text = "Next wave in " + (10-c);
 			yield return new WaitForSeconds(1);
 		}
+		wavecountdowntext.text = "";
 		if (wave % 8 == 0) count = 15;
 		if (wave % 10 == 0) count = 1;
 		if (wave % 7 == 0) count = 8;
