@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
+
 
 public class MapBehavior : MonoBehaviour {
 
@@ -11,16 +13,18 @@ public class MapBehavior : MonoBehaviour {
 	bool spawned;
 	public Sprite creepsprite;
 	public float SPAWNDELAY;
-	public int resources = 100;
+	public int resources = 150;
 	public Text restext;
 	public Text towertext;
 	public Text lifewavetext;
+	public Text wavecountdowntext;
 	public int lives;
 	private bool running = true;
 	private bool buildingTower = false;
 	private GameObject newTower;
 	public GameObject towerTemplate;
 	private int[,] groundProperties;
+	private bool spawnedAll = true;
 	// Use this for initialization
 	void Start () {
 		wave = 0;
@@ -70,17 +74,15 @@ public class MapBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!running) return;
-		if (creeps.Count == 0)
+		if (creeps.Count == 0 && spawnedAll)
 		{
 			spawned = false;
 			wave++;
 		}
 		if (!spawned)
 		{
-			for (int i = 0; i < 10; ++i)
-			{
-				Invoke("spawnCreep", i*SPAWNDELAY);
-			}
+			spawnedAll = false;
+			StartCoroutine("spawnCreeps");
 			spawned = true;
 		}
 		restext.text = "Resources: " + resources;
@@ -124,7 +126,35 @@ public class MapBehavior : MonoBehaviour {
 		return result;
 	}
 
-	void spawnCreep()
+	IEnumerator spawnCreeps()
+	{
+		int count = 10;
+		for (int c = 0; c < 10; ++c)
+		{
+			wavecountdowntext.text = "Next wave in " + (10-c);
+			yield return new WaitForSeconds(1);
+		}
+		if (wave % 8 == 0) count = 15;
+		if (wave % 10 == 0) count = 1;
+		if (wave % 7 == 0) count = 8;
+		
+		for (int i = 0; i < count; ++i)
+		{
+			Creep.CreepType type = Creep.CreepType.NORMAL;
+			Creep.CreepTrait[] traits = new Creep.CreepTrait[] {};
+			if (wave % 6 == 0) type = Creep.CreepType.LARGE;
+			if (wave % 5 == 0 && i %4 == 3) type = Creep.CreepType.LARGE;
+			if (wave % 4 == 0) traits = new Creep.CreepTrait[] { Creep.CreepTrait.FAST };
+			if (wave % 11 == 0) traits = new Creep.CreepTrait[] { Creep.CreepTrait.SHIELDED };
+			if (wave % 10 == 0) type = Creep.CreepType.BOSS;
+
+			spawnCreep(type, traits);
+			yield return new WaitForSeconds(1.0f);
+		}
+		spawnedAll = true;
+	}
+	
+	void spawnCreep(Creep.CreepType type, Creep.CreepTrait[] traits)
 	{
 		Creep newcreep;
 		GameObject go = new GameObject();
@@ -132,7 +162,8 @@ public class MapBehavior : MonoBehaviour {
 		rend.sprite = creepsprite; 
 		newcreep = go.AddComponent<Creep>();
 		newcreep.map = this;
-		newcreep.setType(Creep.CreepType.NORMAL, wave);
+
+		newcreep.setType(type, traits, wave);
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
 	}

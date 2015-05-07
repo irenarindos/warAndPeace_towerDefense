@@ -130,7 +130,7 @@ public class BombModule : TowerModule  {
 // decrease fire delay
 public class GearModule : TowerModule  {
 	
-	private float percent = 0.9f;
+	private float percent = 1f;
 	
 	override public float getShootDelay(float delay)
 	{

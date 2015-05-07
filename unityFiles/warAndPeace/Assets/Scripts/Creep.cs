@@ -7,7 +7,11 @@ public class Creep : MonoBehaviour {
 	{
 		NORMAL,
 		LARGE,
-		BOSS,
+		BOSS
+	}
+
+	public enum CreepTrait
+	{
 		FAST,
 		SHIELDED
 	}
@@ -177,9 +181,29 @@ public class Creep : MonoBehaviour {
 		return result;
 	}
 
-	public void setType(CreepType t, int wave)
+	public void setType(CreepType t, CreepTrait[] traits, int wave)
 	{
-		addModule(new NormalCreep(wave));
+		switch (t)
+		{
+		case CreepType.NORMAL: addModule(new NormalCreep(wave)); break;
+		case CreepType.LARGE:  addModule(new LargeCreep(wave)); 
+			transform.localScale *= 1.8f;
+			 break;
+		case CreepType.BOSS: addModule(new BossCreep(wave)); 
+			transform.localScale *= 3f;
+			break;
+			
+		}
+		foreach (CreepTrait trait in traits)
+		{
+			switch (trait)
+			{
+			case CreepTrait.FAST: addModule<FastCreep>(); break;
+			case CreepTrait.SHIELDED: addModule<CreepShield>(); break;
+			}
+
+		}
+
 
 	}
 }

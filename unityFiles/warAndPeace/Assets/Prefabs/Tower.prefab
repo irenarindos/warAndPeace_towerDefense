@@ -40,7 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ac65f18956a204690f00ea4b9cd0b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SHOOTDELAY: .300000012
+  SHOOTDELAY: .400000006
   DAMAGE: 25
   RANGE: 2
   lastShot: 0
