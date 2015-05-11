@@ -50,10 +50,10 @@ public class NormalCreep : CreepModule
 
 	public NormalCreep(int wave)
 	{
-		this.health = 100 + wave*25;
+		this.health = 50 + wave*50;
 		this.maxHealth = this.health;
-		this.value = wave + 1;
-		this.speed = 1.0f;
+		this.value = wave;
+		this.speed = 0.9f;
 	}
 
 	override public float getHealth(float health)
@@ -92,10 +92,10 @@ public class LargeCreep : CreepModule
 	
 	public LargeCreep(int wave)
 	{
-		this.health = 200 + wave*50;
+		this.health = 200 + wave*80;
 		this.maxHealth = this.health;
-		this.value = wave + 1 + wave/2;
-		this.speed = 0.8f;
+		this.value = 5*wave;
+		this.speed = 0.7f;
 	}
 	
 	override public float getHealth(float health)
@@ -134,10 +134,10 @@ public class BossCreep : CreepModule
 	
 	public BossCreep(int wave)
 	{
-		this.health = 500 + wave*250;
+		this.health = 2500 + wave*250;
 		this.maxHealth = this.health;
-		this.value = 5*wave + 10 + wave/2;
-		this.speed = 0.6f;
+		this.value = 100*wave + 100;
+		this.speed = 0.5f;
 	}
 	
 	override public float getHealth(float health)
@@ -172,7 +172,7 @@ public class FastCreep : CreepModule
 
 	override public float getSpeed(float speed)
 	{
-		return speed*1.8f;
+		return speed*1.7f;
 	}
 
 	override public int getPriority()

@@ -18,6 +18,7 @@ public class MapBehavior : MonoBehaviour {
 	public Text towertext;
 	public Text lifewavetext;
 	public Text wavecountdowntext;
+	public Text tooltiptext;
 	public int lives;
 	private bool running = true;
 	private bool buildingTower = false;
@@ -68,6 +69,7 @@ public class MapBehavior : MonoBehaviour {
 		if (selectedTower != null)
 		{
 			selectedTower.upgrade(what);
+			showTooltip(what);
 		}
 	}
 	
@@ -185,6 +187,19 @@ public class MapBehavior : MonoBehaviour {
 		buildingTower = true;
 
 		gameObject.GetComponent<BuildHelper>().populate(groundProperties);
+	}
+
+	public void showTooltip(int nr)
+	{
+		if (selectedTower != null)
+		{
+		    tooltiptext.text = selectedTower.getTooltip(nr);
+		}
+	}
+
+	public void hideTooltip()
+	{
+		tooltiptext.text = "";
 	}
 
 	public void OnMouseDown()

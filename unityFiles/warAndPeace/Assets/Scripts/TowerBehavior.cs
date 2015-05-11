@@ -52,6 +52,11 @@ public class TowerBehavior : MonoBehaviour {
 		}
 	}
 
+	public string getTooltip(int what)
+	{
+		return "Cost: " + modules[what].getUpgradeCost();
+	}
+
 	void addModule<T>() where T: TowerModule, new()
 	{
 		T newModule = new T();

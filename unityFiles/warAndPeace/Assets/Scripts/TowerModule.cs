@@ -73,18 +73,18 @@ public class BasicModule : TowerModule  {
 public class ScopeModule : TowerModule  {
 
 	private float percent = 1.0f;
+	private int level = 0;
 
 	override public float getRange(float range)
 	{
 		return range*percent;
 	}
-
-	private int cost = 20;
 	
+
 	override public void upgrade()
 	{
-		percent *= 1.1f;
-		cost *= 2;
+		level++;
+		percent = Mathf.Pow(1.15f, level) - level*0.1f;
 	}
 	
 	override public bool canUpgrade()
@@ -94,7 +94,7 @@ public class ScopeModule : TowerModule  {
 	
 	override public int getUpgradeCost()
 	{
-		return cost;
+		return Mathf.RoundToInt((Mathf.Pow(1.65f, level) - 0.5f*level)*20);
 	}
 }
 
@@ -102,18 +102,19 @@ public class ScopeModule : TowerModule  {
 public class BombModule : TowerModule  {
 	
 	private float percent = 1.0f;
+	private int level = 0;
 	
 	override public float getDamage(float damage)
 	{
 		return damage*percent;
 	}
-
-	private int cost = 30;
 	
+
 	override public void upgrade()
 	{
-		percent *= 1.25f;
-		cost *= 2;
+		level++;
+		percent = 0.5f + Mathf.Pow (1.4f, level) - level*0.15f;
+
 	}
 	
 	override public bool canUpgrade()
@@ -123,7 +124,7 @@ public class BombModule : TowerModule  {
 	
 	override public int getUpgradeCost()
 	{
-		return cost;
+		return Mathf.RoundToInt((Mathf.Pow(1.8f, level) - 0.75f*level)*30);
 	}
 }
 
@@ -137,12 +138,12 @@ public class GearModule : TowerModule  {
 		return delay*percent;
 	}
 
-	private int cost = 25;
+	private int level = 0;
 
 	override public void upgrade()
 	{
-		percent *= 0.9f;
-		cost *= 2;
+		level++;
+		percent = Mathf.Pow (0.8f, level) + level*0.1f;
 	}
 	
 	override public bool canUpgrade()
@@ -152,6 +153,6 @@ public class GearModule : TowerModule  {
 	
 	override public int getUpgradeCost()
 	{
-		return cost;
+		return Mathf.RoundToInt((Mathf.Pow(1.9f, level) - 0.65f*level)*25);
 	}
 }
