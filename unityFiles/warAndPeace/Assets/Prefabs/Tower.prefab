@@ -50,6 +50,7 @@ MonoBehaviour:
   target: {fileID: 0}
   map: {fileID: 0}
   rangeIndicator: {fileID: 0}
+  shotsprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!212 &21202712
 SpriteRenderer:
   m_ObjectHideFlags: 1

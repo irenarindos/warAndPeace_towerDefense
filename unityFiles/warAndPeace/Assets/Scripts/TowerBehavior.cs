@@ -23,6 +23,7 @@ public class TowerBehavior : MonoBehaviour {
 	public Creep target;
 	public MapBehavior map;
 	public GameObject rangeIndicator;
+	public Sprite shotsprite;
 
 	// Use this for initialization
 	void Start () {
@@ -80,7 +81,7 @@ public class TowerBehavior : MonoBehaviour {
 		{
 			if (Time.time >= lastShot + getShootDelay())
 			{
-			    target.damage(getDamage());
+				fireShot();
 				lastShot = Time.time;
 			}
 		}
@@ -89,6 +90,20 @@ public class TowerBehavior : MonoBehaviour {
 	public void showStats()
 	{
 		map.towertext.text = "Damage: " + getDamage() + "; Range: " + getRange() + "; Fire delay: " + getShootDelay() + "; DPS: " + getDamage()/getShootDelay();
+	}
+
+	public void fireShot()
+	{
+		ProjectileBehavior shot;
+		GameObject go = new GameObject();
+		SpriteRenderer rend = go.AddComponent<SpriteRenderer>();
+		rend.sprite = shotsprite; 
+		rend.color = Color.red;
+		shot = go.AddComponent<ProjectileBehavior>();
+		shot.init(target, this, getDamage());
+		shot.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+		shot.transform.position = transform.position;
+		shot.transform.parent = target.transform;
 	}
 
 	void acquireTarget()
