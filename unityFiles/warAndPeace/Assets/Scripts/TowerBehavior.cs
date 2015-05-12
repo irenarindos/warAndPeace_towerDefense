@@ -31,6 +31,8 @@ public class TowerBehavior : MonoBehaviour {
 		addModule<BasicModule>();
 		addModule<GearModule>();
 		addModule<ScopeModule>();
+		addModule<DynamiteModule>();
+		addModule<SteamModule>();
 		addModule<BombModule>();
 		lastShot = Time.time;
 
@@ -54,7 +56,7 @@ public class TowerBehavior : MonoBehaviour {
 
 	public string getTooltip(int what)
 	{
-		return "Cost: " + modules[what].getUpgradeCost();
+		return modules[what].getName() + "; Upgrade cost: " + modules[what].getUpgradeCost();
 	}
 
 	void addModule<T>() where T: TowerModule, new()
@@ -105,7 +107,13 @@ public class TowerBehavior : MonoBehaviour {
 		rend.sprite = shotsprite; 
 		rend.color = Color.red;
 		shot = go.AddComponent<ProjectileBehavior>();
-		shot.init(target, this, getDamage());
+		target.damage(getDamage());
+		IList<ImpactEffect> effects = new List<ImpactEffect>();
+		foreach(TowerModule mod in modules)
+		{
+			mod.getImpactEffect(effects);
+		}
+		shot.init(target, this, getDamage(), effects);
 		shot.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 		shot.transform.position = transform.position;
 		shot.transform.parent = target.transform;
@@ -113,6 +121,7 @@ public class TowerBehavior : MonoBehaviour {
 
 	void acquireTarget()
 	{
+		if (target != null && target.dying) target = null;
 		if (targetingStrategy == TargetingStrategy.FIRSTINRANGE)
 		{
 			if (target == null)

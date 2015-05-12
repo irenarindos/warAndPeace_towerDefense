@@ -21,12 +21,18 @@ public class Creep : MonoBehaviour {
 	private IList<Vector2> path;
 	private bool valid;
 	public bool dead;
+	public bool dying;
 	private int waypoint;
 	private int pathpoint;
 	private IList<CreepModule> modules;
 	public float health
 	{
 		get { return getHealth(); }
+	}
+
+	public float prospectiveHealth
+	{
+		get { return getProspectiveHealth(); }
 	}
 	public float maxHealth
 	{
@@ -71,6 +77,34 @@ public class Creep : MonoBehaviour {
 		newModule.init(this);
 	}
 
+	public T getModule<T>() where T : CreepModule, new()
+	{
+		if (!hasModule<T>())
+		{
+			addModule<T>();
+		}
+		foreach (CreepModule mod in modules)
+		{
+			if (mod is T)
+			{
+				return (T)mod;
+			}
+		}
+		return null;
+	}
+
+	public bool hasModule<T>() where T : CreepModule, new()
+	{
+		foreach (CreepModule mod in modules)
+		{
+			if (mod is T)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void getWaypoint()
 	{
 		path = map.getPathToWaypoint(waypoint, gameObject.transform.position);
@@ -78,21 +112,26 @@ public class Creep : MonoBehaviour {
 		valid = true;
 		if (path.Count == 0)
 		{
+			dying = true;
 			dead = true;
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (dying)
+		{
+			map.removeCreep(this);
+		}
 		if (dead)
 		{
 			if (health <= 0)
 			    map.resources += value;
 		    else
 				map.lives -= 1;
-			map.removeCreep(this);
 			gameObject.SetActive(false);
 			Destroy (gameObject, 1);
+			map.spawnedCreeps--;
 			return;
 		}
 		if (path == null) return;
@@ -132,7 +171,18 @@ public class Creep : MonoBehaviour {
 		{
 			dmg = mod.damage(dmg);
 		}
+		if (prospectiveHealth <= 0)
+		{
+			dying = true;
+		}
+	}
 
+	public void realizeDamage(float dmg)
+	{
+		foreach (CreepModule mod in modules)
+		{
+			dmg = mod.realizeDamage(dmg);
+		}
 		//gameObject.GetComponent<SpriteRenderer>().color.r = (int)(255*health/100.0);
 		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/maxHealth);
 		if (health <= 0)
@@ -157,6 +207,16 @@ public class Creep : MonoBehaviour {
 		foreach (CreepModule mod in modules)
 		{
 			result = mod.getHealth(result);
+		}
+		return result;
+	}
+
+	public float getProspectiveHealth()
+	{
+		float result = 0;
+		foreach (CreepModule mod in modules)
+		{
+			result = mod.getProspectiveHealth(result);
 		}
 		return result;
 	}

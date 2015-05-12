@@ -10,6 +10,7 @@ public class MapBehavior : MonoBehaviour {
 	private IList<TowerBehavior> towers;
 	public IList<Creep> creeps;
 	int wave;
+	public int spawnedCreeps = 0;
 	bool spawned;
 	public Sprite creepsprite;
 	public float SPAWNDELAY;
@@ -76,7 +77,7 @@ public class MapBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!running) return;
-		if (creeps.Count == 0 && spawnedAll)
+		if (spawnedCreeps == 0 && spawnedAll)
 		{
 			spawned = false;
 			wave++;
@@ -169,6 +170,7 @@ public class MapBehavior : MonoBehaviour {
 		newcreep.setType(type, traits, wave);
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
+		spawnedCreeps++;
 	}
 
 	public void startTowerBuild()
