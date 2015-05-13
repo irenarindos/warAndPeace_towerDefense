@@ -9,6 +9,7 @@ public class TowerBehavior : MonoBehaviour {
 	public float lastShot;
 	public bool selected = false;
 	public bool isBuilt = false;
+	public Material boltmat;
 	public enum TargetingStrategy
 	{
 		FIRSTINRANGE,
@@ -101,22 +102,35 @@ public class TowerBehavior : MonoBehaviour {
 
 	public void fireShot()
 	{
-		ProjectileBehavior shot;
-		GameObject go = new GameObject();
-		SpriteRenderer rend = go.AddComponent<SpriteRenderer>();
-		rend.sprite = shotsprite; 
-		rend.color = Color.red;
-		shot = go.AddComponent<ProjectileBehavior>();
-		target.damage(getDamage());
 		IList<ImpactEffect> effects = new List<ImpactEffect>();
 		foreach(TowerModule mod in modules)
 		{
 			mod.getImpactEffect(effects);
 		}
+		target.damage(getDamage());
+
+		/*ProjectileBehavior shot;
+		GameObject go = new GameObject();
+		SpriteRenderer rend = go.AddComponent<SpriteRenderer>();
+		rend.sprite = shotsprite; 
+		rend.color = Color.red;
+		shot = go.AddComponent<ProjectileBehavior>();
 		shot.init(target, this, getDamage(), effects);
 		shot.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 		shot.transform.position = transform.position;
-		shot.transform.parent = target.transform;
+		shot.transform.parent = target.transform;*/
+
+		GameObject bolt = new GameObject();
+		bolt.AddComponent<LineRenderer>();
+		BoltCleanup cleanup = bolt.AddComponent<BoltCleanup>();
+		cleanup.expiration = Time.time + getShootDelay()/2.0f;
+		cleanup.refresh = 0.05f;
+		cleanup.source = (Vector2)gameObject.transform.position;
+		cleanup.target = target;
+		cleanup.boltmat = boltmat;
+		cleanup.damage = getDamage ();
+		cleanup.effects = effects;
+		cleanup.tower = this;
 	}
 
 	void acquireTarget()

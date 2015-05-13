@@ -13,7 +13,8 @@ public class Creep : MonoBehaviour {
 	public enum CreepTrait
 	{
 		FAST,
-		SHIELDED
+		SHIELDED,
+		ARMORED
 	}
 
 	private const float TARGETDIST = 0.05f;
@@ -260,6 +261,7 @@ public class Creep : MonoBehaviour {
 			{
 			case CreepTrait.FAST: addModule<FastCreep>(); break;
 			case CreepTrait.SHIELDED: addModule<CreepShield>(); break;
+			case CreepTrait.ARMORED: addModule<CreepArmor>(); break;
 			}
 
 		}

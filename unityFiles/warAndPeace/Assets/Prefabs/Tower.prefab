@@ -46,6 +46,7 @@ MonoBehaviour:
   lastShot: 0
   selected: 1
   isBuilt: 0
+  boltmat: {fileID: 2100000, guid: 272ba847f100d4251bb8260575189042, type: 2}
   targetingStrategy: 0
   target: {fileID: 0}
   map: {fileID: 0}

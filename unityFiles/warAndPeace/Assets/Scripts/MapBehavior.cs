@@ -132,9 +132,9 @@ public class MapBehavior : MonoBehaviour {
 	IEnumerator spawnCreeps()
 	{
 		int count = 10;
-		for (int c = 0; c < 10; ++c)
+		for (int c = 0; c < 5; ++c)
 		{
-			wavecountdowntext.text = "Next wave in " + (10-c);
+			wavecountdowntext.text = "Next wave in " + (5-c);
 			yield return new WaitForSeconds(1);
 		}
 		wavecountdowntext.text = "";
