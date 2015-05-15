@@ -26,6 +26,9 @@ public class Creep : MonoBehaviour {
 	private int waypoint;
 	private int pathpoint;
 	private IList<CreepModule> modules;
+	//private HealthBarManager healthBar;
+	private GameObject healthBar;
+
 	public float health
 	{
 		get { return getHealth(); }
@@ -52,9 +55,9 @@ public class Creep : MonoBehaviour {
 		waypoint = 0;
 		getWaypoint();
 		if (modules == null) modules = new List<CreepModule>();
-		healthIndicator = (GameObject)Instantiate(Resources.Load("healthBar"));
-		healthIndicator.transform.position = gameObject.transform.position;
-		healthIndicator.transform.SetParent (gameObject.transform);//this;//gameObject;
+		healthBar = (GameObject)Instantiate(Resources.Load("healthBarManager"));
+		healthBar.transform.position = gameObject.transform.position + new Vector3(0F, .1F, 0F);
+		healthBar.transform.SetParent (gameObject.transform);//this;//gameObject;
 	}
 
 	void addModule<T>() where T: CreepModule, new()
@@ -162,7 +165,7 @@ public class Creep : MonoBehaviour {
 	//Red is damage taken, green is health left
 	private void drawHealthBar(){
 		float damage = health / maxHealth;
-		healthBar hb = (healthBar)healthIndicator.GetComponent<healthBar> ();
+		HealthBarManager hb = (HealthBarManager)healthBar.GetComponent<HealthBarManager> ();
 		hb.setHealthPercent(damage);
 	}
 
