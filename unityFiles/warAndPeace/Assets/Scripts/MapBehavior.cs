@@ -27,6 +27,7 @@ public class MapBehavior : MonoBehaviour {
 	public GameObject towerTemplate;
 	private int[,] groundProperties;
 	private bool spawnedAll = true;
+	public RuntimeAnimatorController creepanim;
 	// Use this for initialization
 	void Start () {
 		wave = 0;
@@ -35,7 +36,9 @@ public class MapBehavior : MonoBehaviour {
 		waypoints = new List<Vector2>();
 		waypoints.Add(new Vector2(0f,5f));
 		waypoints.Add(new Vector2(-1f,1.2f));
-		waypoints.Add(new Vector2(-4.8f,-0.5f));
+		waypoints.Add(new Vector2(-3.6f,0.6f));
+		waypoints.Add(new Vector2(-5.1f,-0.5f));
+
 		waypoints.Add(new Vector2(-3.5f,-2f));
 		waypoints.Add(new Vector2(1f,-2f));
 		waypoints.Add(new Vector2(4f,-2.5f));
@@ -64,6 +67,7 @@ public class MapBehavior : MonoBehaviour {
 	}
 
 	public TowerBehavior selectedTower;
+	public Creep selectedCreep;
 
 	public void upgrade(int what)
 	{
@@ -73,6 +77,12 @@ public class MapBehavior : MonoBehaviour {
 			showTooltip(what);
 		}
 	}
+
+	public void unselect()
+	{
+		if (selectedTower != null) selectedTower.unselect();
+		if (selectedCreep != null) selectedCreep.unselect();
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -80,6 +90,7 @@ public class MapBehavior : MonoBehaviour {
 		if (spawnedCreeps == 0 && spawnedAll)
 		{
 			spawned = false;
+			resources += wave*5;
 			wave++;
 		}
 		if (!spawned)
@@ -113,6 +124,32 @@ public class MapBehavior : MonoBehaviour {
 		if (selectedTower)
 		{
 			selectedTower.showStats();
+		} 
+		else if (selectedCreep)
+		{
+			selectedCreep.showStats();
+		}
+		else towertext.text = "";
+		if (Input.GetMouseButtonDown(0) && buildingTower)
+		{
+			DotProperty prop = gameObject.GetComponent<BuildHelper>().getBuildProperty((Vector2)newTower.transform.position);
+			if (prop.buildable == 1 && resources >= 50)
+			{
+				buildingTower = false;
+				newTower.GetComponent<TowerBehavior>().map = this;
+				newTower.GetComponent<TowerBehavior>().isBuilt = true;
+				towers.Add(newTower.GetComponent<TowerBehavior>());
+				newTower.GetComponent<TowerBehavior>().select();
+				groundProperties[prop.i,prop.j] = 0;
+				gameObject.GetComponent<BuildHelper>().unpopulate();
+				resources -= 50;
+			}
+		}
+		else if (Input.GetMouseButtonDown(1) && buildingTower)
+		{
+			buildingTower = false;
+			Destroy (newTower);
+			gameObject.GetComponent<BuildHelper>().unpopulate();
 		}
 	}
 
@@ -132,6 +169,7 @@ public class MapBehavior : MonoBehaviour {
 	IEnumerator spawnCreeps()
 	{
 		int count = 10;
+		int pergroup = 1;
 		for (int c = 0; c < 5; ++c)
 		{
 			wavecountdowntext.text = "Next wave in " + (5-c);
@@ -140,25 +178,37 @@ public class MapBehavior : MonoBehaviour {
 		wavecountdowntext.text = "";
 		if (wave % 8 == 0) count = 15;
 		if (wave % 10 == 0) count = 1;
-		if (wave % 7 == 0) count = 8;
-		
+		if (wave % 7 == 0) { count = 5; pergroup = 4; }
+		if (wave % 18 == 0) { count = 4; pergroup = 5; }
+		IList<Creep.CreepTrait> traits = new List<Creep.CreepTrait>();
+		if (wave % 4 == 0) traits.Add(Creep.CreepTrait.FAST);
+		if (wave % 11 == 0) traits.Add(Creep.CreepTrait.SHIELDED);
+		if (wave % 9 == 0) traits.Add(Creep.CreepTrait.PLATED50);
+		if (wave % 43 == 0) traits.Add (Creep.CreepTrait.PLATED1);
+		if (wave % 23 == 0) traits.Add (Creep.CreepTrait.PLATED10);
+		if (wave % 17 == 0) traits.Add (Creep.CreepTrait.ENRAGED);
+		if (wave % 10 == 0) count += wave/40;
+		else count += wave/8;
+
 		for (int i = 0; i < count; ++i)
 		{
-			Creep.CreepType type = Creep.CreepType.NORMAL;
-			Creep.CreepTrait[] traits = new Creep.CreepTrait[] {};
-			if (wave % 6 == 0) type = Creep.CreepType.LARGE;
-			if (wave % 5 == 0 && i %4 == 3) type = Creep.CreepType.LARGE;
-			if (wave % 4 == 0) traits = new Creep.CreepTrait[] { Creep.CreepTrait.FAST };
-			if (wave % 11 == 0) traits = new Creep.CreepTrait[] { Creep.CreepTrait.SHIELDED };
-			if (wave % 10 == 0) type = Creep.CreepType.BOSS;
+			for (int j = 0; j < pergroup; ++ j)
+			{
+				Creep.CreepType type = Creep.CreepType.NORMAL;
 
-			spawnCreep(type, traits);
+				if (wave % 6 == 0) type = Creep.CreepType.LARGE;
+				if (wave % 5 == 0 && i %4 == 3) type = Creep.CreepType.LARGE;
+				if (j%3 == 2 && !traits.Contains(Creep.CreepTrait.ENRAGED)) traits.Add (Creep.CreepTrait.ENRAGED);
+				if (wave % 10 == 0) type = Creep.CreepType.BOSS;
+				spawnCreep(type, traits);
+				yield return new WaitForSeconds(0.2f);
+			}
 			yield return new WaitForSeconds(1.0f);
 		}
 		spawnedAll = true;
 	}
 	
-	void spawnCreep(Creep.CreepType type, Creep.CreepTrait[] traits)
+	void spawnCreep(Creep.CreepType type, IList<Creep.CreepTrait> traits)
 	{
 		Creep newcreep;
 		GameObject go = new GameObject();
@@ -166,7 +216,9 @@ public class MapBehavior : MonoBehaviour {
 		rend.sprite = creepsprite; 
 		newcreep = go.AddComponent<Creep>();
 		newcreep.map = this;
-
+		Animator anim  = go.AddComponent<Animator>();
+		anim.runtimeAnimatorController = creepanim;
+		go.AddComponent<BoxCollider2D>();
 		newcreep.setType(type, traits, wave);
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
@@ -183,7 +235,7 @@ public class MapBehavior : MonoBehaviour {
 			gameObject.GetComponent<BuildHelper>().unpopulate();
 			return;
 		}
-		if (selectedTower) selectedTower.unselect();
+		unselect ();
 		newTower = Instantiate (towerTemplate);
 		newTower.GetComponent<TowerBehavior>().map = this;
 		buildingTower = true;
@@ -208,22 +260,8 @@ public class MapBehavior : MonoBehaviour {
 	{
 
 
-		if (buildingTower)
-		{
-			DotProperty prop = gameObject.GetComponent<BuildHelper>().getBuildProperty((Vector2)newTower.transform.position);
-			if (prop.buildable == 1 && resources >= 50)
-			{
-				buildingTower = false;
-				newTower.GetComponent<TowerBehavior>().map = this;
-				newTower.GetComponent<TowerBehavior>().isBuilt = true;
-				towers.Add(newTower.GetComponent<TowerBehavior>());
-				newTower.GetComponent<TowerBehavior>().select();
-				groundProperties[prop.i,prop.j] = 0;
-				gameObject.GetComponent<BuildHelper>().unpopulate();
-				resources -= 50;
-			}
-		}
-		else
+
+		/*else
 		{
 			Vector3 mousePosition = Input.mousePosition;
 			mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -236,6 +274,6 @@ public class MapBehavior : MonoBehaviour {
 				}
 			}
 			
-		}
+		}*/
 	}
 }

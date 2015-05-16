@@ -187,14 +187,10 @@ public class TowerBehavior : MonoBehaviour {
 
 	public void OnMouseDown()
 	{
-		/*if (isBuilt)
+		if (isBuilt)
 		{
 			select ();
 		}
-		else
-		{
-			map.OnMouseDown();
-		}*/
 	}
 
 	public void select()

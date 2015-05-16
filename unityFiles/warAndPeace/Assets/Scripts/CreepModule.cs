@@ -49,6 +49,11 @@ public class CreepModule  {
 		return maxHealth;
 	}
 
+	virtual public string getName()
+	{
+		return "";
+	}
+
 }
 
 public class CreepType : CreepModule
@@ -95,6 +100,11 @@ public class CreepType : CreepModule
 	{
 		return this.maxHealth;
 	}
+
+	override public string getName()
+	{
+		return "CreepType";
+	}
 }
 
 public class NormalCreep : CreepType 
@@ -103,14 +113,17 @@ public class NormalCreep : CreepType
 
 	public NormalCreep(int wave)
 	{
-		this.health = 50 + wave*50;
+		this.health = 80 + wave*wave*15;
 		this.prospectiveHealth = this.health;
 		this.maxHealth = this.health;
 		this.value = wave;
 		this.speed = 0.9f;
 	}
 
-	
+	override public string getName()
+	{
+		return "Normal Creep";
+	}
 }
 
 public class LargeCreep : CreepType 
@@ -118,11 +131,16 @@ public class LargeCreep : CreepType
 	
 	public LargeCreep(int wave)
 	{
-		this.health = 200 + wave*80;
+		this.health = 100 + wave*wave*25;
 		this.prospectiveHealth = this.health;
 		this.maxHealth = this.health;
 		this.value = 5*wave;
 		this.speed = 0.7f;
+	}
+
+	override public string getName()
+	{
+		return "Large Creep";
 	}
 }
 
@@ -131,11 +149,16 @@ public class BossCreep : CreepType
 
 	public BossCreep(int wave)
 	{
-		this.health = 2500 + wave*250;
+		this.health = 5000 + wave*wave*50;
 		this.prospectiveHealth = this.health;
 		this.maxHealth = this.health;
 		this.value = 100*wave + 100;
 		this.speed = 0.5f;
+	}
+
+	override public string getName()
+	{
+		return "Boss Creep";
 	}
 
 }
@@ -153,6 +176,10 @@ public class FastCreep : CreepModule
 		return 2;
 	}
 
+	override public string getName()
+	{
+		return "Fast";
+	}
 }
 
 
@@ -176,7 +203,11 @@ public class SlowModule : CreepModule
 	{
 		return 6;
 	}
-	
+
+	override public string getName()
+	{
+		return "Slowed";
+	}
 }
 
 public class CreepShield : CreepModule 
@@ -208,7 +239,11 @@ public class CreepShield : CreepModule
 	{
 		return -10;
 	}
-	
+
+	override public string getName()
+	{
+		return "Shielded";
+	}
 }
 
 public class CreepArmor : CreepModule 
@@ -221,7 +256,55 @@ public class CreepArmor : CreepModule
 
 	override public int getPriority()
 	{
-		return -1;
+		return -2;
+	}
+
+	override public string getName()
+	{
+		return "Armored";
+	}
+}
+
+
+public class CreepPlating : CreepModule 
+{
+	public float maximum = 50.0f;
+	override public float damage(float dmg)
+	{
+		return Mathf.Min (dmg, maximum);
 	}
 	
+	override public int getPriority()
+	{
+		return -1;
+	}
+
+	override public string getName()
+	{
+		if (maximum > 10)
+		    return "Plated";
+		if (maximum > 1)
+			return "Heavily Plated";
+		return "Very heavily plated";
+	}
+	
+}
+
+public class EnrageCreep : CreepModule 
+{
+	// increase movement speed by 1% for each % of missing health
+	override public float getSpeed(float speed)
+	{
+		return speed*(2- (creep.health/creep.maxHealth));
+	}
+	
+	override public int getPriority()
+	{
+		return 5;
+	}
+
+	override public string getName()
+	{
+		return "Enraged";
+	}
 }

@@ -14,7 +14,11 @@ public class Creep : MonoBehaviour {
 	{
 		FAST,
 		SHIELDED,
-		ARMORED
+		ARMORED,
+		ENRAGED,
+		PLATED50,
+		PLATED10,
+		PLATED1
 	}
 
 	private const float TARGETDIST = 0.05f;
@@ -26,6 +30,8 @@ public class Creep : MonoBehaviour {
 	private int waypoint;
 	private int pathpoint;
 	private IList<CreepModule> modules;
+	private bool lookright = true;
+	private bool selected = false;
 	//private HealthBarManager healthBar;
 	private GameObject healthBar;
 
@@ -60,13 +66,14 @@ public class Creep : MonoBehaviour {
 		healthBar.transform.SetParent (gameObject.transform);//this;//gameObject;
 	}
 
-	void addModule<T>() where T: CreepModule, new()
+	T addModule<T>() where T: CreepModule, new()
 	{
 		T newModule = new T();
 		int i = 0;
 		for (; i < modules.Count && modules[i].getPriority() < newModule.getPriority(); ++i);
 		modules.Insert(i, newModule);
 		newModule.init(this);
+		return newModule;
 	}
 
 	void addModule(CreepModule newModule) 
@@ -95,6 +102,20 @@ public class Creep : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+
+	public void showStats()
+	{
+		string mods = "";
+		foreach (CreepModule mod in modules)
+		{
+			string name = mod.getName();
+			if (mods != "")
+				mods += "; ";
+			mods += name;
+		}
+		map.towertext.text = "Creep; health: " + health + "/" + maxHealth + "; speed: " + getSpeed() + "; modifiers: " + mods;;
+
 	}
 
 	public bool hasModule<T>() where T : CreepModule, new()
@@ -133,6 +154,7 @@ public class Creep : MonoBehaviour {
 			    map.resources += value;
 		    else
 				map.lives -= 1;
+			unselect ();
 			gameObject.SetActive(false);
 			Destroy (gameObject, 1);
 			map.spawnedCreeps--;
@@ -157,8 +179,24 @@ public class Creep : MonoBehaviour {
 		{
 			Vector2 dir = path[pathpoint] - (Vector2)gameObject.transform.position;
 			gameObject.transform.position += (Vector3)dir.normalized*v;
+			if (dir.x < 0 && lookright)
+			{
+				gameObject.transform.rotation = Quaternion.Euler (new Vector3(0, 180, 0));
+				healthBar.transform.localRotation = Quaternion.Euler (new Vector3(0, 180, 0));
+				lookright = false;
+			}
+			if (dir.x >= 0 && !lookright)
+			{
+				lookright = true;
+				gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+				healthBar.transform.localRotation = Quaternion.Euler (new Vector3(0, 0, 0));
+				healthBar.transform.localPosition = new Vector3(0F, .1F, 0F);
+			}
 		}
 		drawHealthBar ();
+		if (selected)
+		{
+		}
 	}
 
 	//Draw a health bar above the creep
@@ -187,12 +225,18 @@ public class Creep : MonoBehaviour {
 		{
 			dmg = mod.realizeDamage(dmg);
 		}
-		//gameObject.GetComponent<SpriteRenderer>().color.r = (int)(255*health/100.0);
-		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, Color.white, health/maxHealth);
+		recolor ();
 		if (health <= 0)
 		{
 			dead = true;
 		}
+	}
+
+    public void recolor()
+	{
+		Color to = Color.white;
+		if (selected) to = Color.green;
+		gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, to, health/maxHealth);
 	}
 
 	public float getSpeed()
@@ -245,7 +289,25 @@ public class Creep : MonoBehaviour {
 		return result;
 	}
 
-	public void setType(CreepType t, CreepTrait[] traits, int wave)
+	public void OnMouseDown()
+	{
+	    map.unselect();
+		this.selected = true;
+		map.selectedCreep = this;
+	    recolor();
+	}
+
+	public void unselect()
+	{
+		if (this.selected)
+		{
+		    this.selected = false;
+		    map.selectedCreep = null;
+		    recolor();
+		}
+	}
+
+	public void setType(CreepType t, IList<CreepTrait> traits, int wave)
 	{
 		switch (t)
 		{
@@ -258,6 +320,7 @@ public class Creep : MonoBehaviour {
 			break;
 			
 		}
+		CreepPlating p = null;
 		foreach (CreepTrait trait in traits)
 		{
 			switch (trait)
@@ -265,10 +328,23 @@ public class Creep : MonoBehaviour {
 			case CreepTrait.FAST: addModule<FastCreep>(); break;
 			case CreepTrait.SHIELDED: addModule<CreepShield>(); break;
 			case CreepTrait.ARMORED: addModule<CreepArmor>(); break;
+			case CreepTrait.ENRAGED: addModule<EnrageCreep>(); break;
+			case CreepTrait.PLATED50: 
+				if (p == null) 
+				    p = addModule<CreepPlating>(); 
+				p.maximum = 50.0f; 
+				break;
+			case CreepTrait.PLATED10:
+				if (p == null) 
+				    p = addModule<CreepPlating>(); 
+				p.maximum = 10.0f; 
+				break;
+			case CreepTrait.PLATED1: 
+				if (p == null) 
+				    p = addModule<CreepPlating>();
+				p.maximum = 1.0f; 
+				break;
 			}
-
 		}
-
-
 	}
 }

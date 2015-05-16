@@ -334,7 +334,6 @@ GameObject:
   - 4: {fileID: 451427421}
   - 212: {fileID: 451427420}
   - 114: {fileID: 451427422}
-  - 61: {fileID: 451427423}
   - 114: {fileID: 451427424}
   m_Layer: 0
   m_Name: background
@@ -403,20 +402,9 @@ MonoBehaviour:
   tooltiptext: {fileID: 1573303415}
   lives: 10
   towerTemplate: {fileID: 166722, guid: 4c7d1d5084cccfa4680f9d21bb95e1e5, type: 2}
+  creepanim: {fileID: 9100000, guid: 54111653a55ac2145bf5933c0f93985a, type: 2}
   selectedTower: {fileID: 0}
---- !u!61 &451427423
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 451427419}
-  m_Enabled: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Size: {x: 10.2399998, y: 7.67999983}
+  selectedCreep: {fileID: 0}
 --- !u!114 &451427424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1517,8 +1505,8 @@ RectTransform:
   m_RootOrder: 10
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -181, y: -217}
-  m_SizeDelta: {x: 600, y: 30}
+  m_AnchoredPosition: {x: -81, y: -217}
+  m_SizeDelta: {x: 800, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1573303415
 MonoBehaviour:

@@ -108,7 +108,7 @@ public class ScopeModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Scope (range)";
+		return "Scope (range; upgrade to " + tower.RANGE*(Mathf.Pow(1.15f, level+1) - (level+1)*0.1f)  +  " units)";
 	}
 }
 
@@ -143,7 +143,7 @@ public class BombModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Bomb (damage)";
+		return "Bomb (damage; upgrade to " + tower.DAMAGE*(0.5f + Mathf.Pow (1.4f, level+1) - (level+1)*0.15f ) + " dmg)";
 	}
 }
 
@@ -177,7 +177,7 @@ public class GearModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Gear (attack speed)";
+		return "Gear (attack delay; upgrade to: " + tower.SHOOTDELAY * Mathf.Pow (0.7f, (level + 1)/7.0f) + "s delay)";
 	}
 }
 
@@ -212,7 +212,7 @@ public class SteamModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Steam (slows creeps by " + (1-percent)*100 + " %)";
+		return "Steam (slows creeps; currently by " + (1-percent)*100 + " %; upgrade to increase to " + (1-(Mathf.Pow (0.75f, (level+1)/7.0f) - 0.1f))*100 + "%)";
 	}
 }
 
@@ -260,6 +260,6 @@ public class DynamiteModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Dynamite (" + percent*100 + " % splash damage in a " + radius + " radius)";
+		return "Dynamite (" + percent*100 + " % splash damage in a " + radius + " radius; upgrade for " + (1 - Mathf.Pow (0.7f, (level+1)/4.0f))*100 + "% in a " + (1f + 0.2f * (level+1)) + " radius)";
 	}
 }
