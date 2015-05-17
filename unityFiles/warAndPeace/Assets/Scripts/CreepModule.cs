@@ -113,7 +113,7 @@ public class NormalCreep : CreepType
 
 	public NormalCreep(int wave)
 	{
-		this.health = 80 + wave*wave*15;
+		this.health = 90 + wave*wave*10;
 		this.prospectiveHealth = this.health;
 		this.maxHealth = this.health;
 		this.value = wave;

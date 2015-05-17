@@ -41,8 +41,8 @@ public class TowerBehavior : MonoBehaviour {
 		SpriteRenderer rend = rangeIndicator.AddComponent<SpriteRenderer>();
 		rend.sprite = Sprite.Create(Utils.makeCircle(), Rect.MinMaxRect(0f, 0f, 128f, 128f), new Vector2(0f,0f));
 		rangeIndicator.transform.parent = transform;
-		rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
-		rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
+		rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange()/transform.localScale.x, -0.64f*getRange()/transform.localScale.x, 0f);
+		rangeIndicator.transform.localScale = new Vector3(getRange()/transform.localScale.x, getRange()/transform.localScale.x, 1f);
 
 	}
 
@@ -73,8 +73,8 @@ public class TowerBehavior : MonoBehaviour {
 	void Update () {
 		if (selected || !isBuilt)
 		{
-			rangeIndicator.transform.localPosition = new Vector3(-0.64f*getRange(), -0.64f*getRange(), 0f);
-			rangeIndicator.transform.localScale = new Vector3(getRange(), getRange(), 1f);
+			rangeIndicator.transform.localPosition = new Vector3(-getRange()/transform.localScale.x, -getRange()/transform.localScale.y, 0f);
+			rangeIndicator.transform.localScale = new Vector3(getRange()/(0.64f*transform.localScale.x), getRange()/(0.64f*transform.localScale.y), 1f);
 		}
 		rangeIndicator.SetActive(selected);
 		

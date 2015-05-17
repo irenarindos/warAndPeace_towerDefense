@@ -228,8 +228,8 @@ public class DynamiteModule : TowerModule  {
 	override public void upgrade()
 	{
 		level++;
-		percent = 1 - Mathf.Pow (0.7f, level/4.0f);
-		radius = 1f + 0.2f * level;
+		percent = 1.2f - Mathf.Pow (0.7f, level/4.0f);
+		radius = 0.3f + 0.2f * level;
 	}
 	
 	override public bool canUpgrade()
@@ -260,6 +260,6 @@ public class DynamiteModule : TowerModule  {
 
 	override public string getName()
 	{
-		return "Dynamite (" + percent*100 + " % splash damage in a " + radius + " radius; upgrade for " + (1 - Mathf.Pow (0.7f, (level+1)/4.0f))*100 + "% in a " + (1f + 0.2f * (level+1)) + " radius)";
+		return "Dynamite (" + percent*100 + " % splash damage in a " + radius + " radius; upgrade for " + (1.2f - Mathf.Pow (0.7f, (level+1)/4.0f))*100 + "% in a " + (0.3f + 0.2f * (level+1)) + " radius)";
 	}
 }

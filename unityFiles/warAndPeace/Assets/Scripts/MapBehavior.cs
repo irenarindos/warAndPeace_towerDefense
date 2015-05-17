@@ -170,6 +170,7 @@ public class MapBehavior : MonoBehaviour {
 	{
 		int count = 10;
 		int pergroup = 1;
+		int level = wave;
 		for (int c = 0; c < 5; ++c)
 		{
 			wavecountdowntext.text = "Next wave in " + (5-c);
@@ -178,29 +179,47 @@ public class MapBehavior : MonoBehaviour {
 		wavecountdowntext.text = "";
 		if (wave % 8 == 0) count = 15;
 		if (wave % 10 == 0) count = 1;
-		if (wave % 7 == 0) { count = 5; pergroup = 4; }
-		if (wave % 18 == 0) { count = 4; pergroup = 5; }
+		if (wave % 7 == 0) { count = 5; pergroup = 4;  level /= 2; }
+		if (wave % 18 == 0) { count = 4; pergroup = 5; level /= 3; }
 		IList<Creep.CreepTrait> traits = new List<Creep.CreepTrait>();
 		if (wave % 4 == 0) traits.Add(Creep.CreepTrait.FAST);
-		if (wave % 11 == 0) traits.Add(Creep.CreepTrait.SHIELDED);
-		if (wave % 9 == 0) traits.Add(Creep.CreepTrait.PLATED50);
-		if (wave % 43 == 0) traits.Add (Creep.CreepTrait.PLATED1);
-		if (wave % 23 == 0) traits.Add (Creep.CreepTrait.PLATED10);
+		//if (wave % 11 == 0) traits.Add(Creep.CreepTrait.SHIELDED);
+		if (wave % 9 == 0) 
+		{
+			traits.Add(Creep.CreepTrait.PLATED50);
+			level -= 5;
+		}
+		if (wave % 43 == 0)
+		{
+			traits.Add (Creep.CreepTrait.PLATED1);
+			level /= 12;
+		}
+		if (wave % 23 == 0)
+		{
+			traits.Add (Creep.CreepTrait.PLATED10);
+			level /= 7;
+		}
 		if (wave % 17 == 0) traits.Add (Creep.CreepTrait.ENRAGED);
 		if (wave % 10 == 0) count += wave/40;
-		else count += wave/8;
+		else count += wave/12;
 
 		for (int i = 0; i < count; ++i)
 		{
 			for (int j = 0; j < pergroup; ++ j)
 			{
+				int clevel = level;
 				Creep.CreepType type = Creep.CreepType.NORMAL;
 
-				if (wave % 6 == 0) type = Creep.CreepType.LARGE;
-				if (wave % 5 == 0 && i %4 == 3) type = Creep.CreepType.LARGE;
+				if (wave % 6 == 0) { type = Creep.CreepType.LARGE; clevel -= 1; }
+				if (wave % 5 == 0 && i %4 == 3) 
+				{ 
+					type = Creep.CreepType.LARGE;
+					if (wave > 10)
+					    clevel -= 3;
+				}
 				if (j%3 == 2 && !traits.Contains(Creep.CreepTrait.ENRAGED)) traits.Add (Creep.CreepTrait.ENRAGED);
 				if (wave % 10 == 0) type = Creep.CreepType.BOSS;
-				spawnCreep(type, traits);
+				spawnCreep(type, traits, clevel);
 				yield return new WaitForSeconds(0.2f);
 			}
 			yield return new WaitForSeconds(1.0f);
@@ -208,7 +227,7 @@ public class MapBehavior : MonoBehaviour {
 		spawnedAll = true;
 	}
 	
-	void spawnCreep(Creep.CreepType type, IList<Creep.CreepTrait> traits)
+	void spawnCreep(Creep.CreepType type, IList<Creep.CreepTrait> traits, int level)
 	{
 		Creep newcreep;
 		GameObject go = new GameObject();
@@ -219,7 +238,7 @@ public class MapBehavior : MonoBehaviour {
 		Animator anim  = go.AddComponent<Animator>();
 		anim.runtimeAnimatorController = creepanim;
 		go.AddComponent<BoxCollider2D>();
-		newcreep.setType(type, traits, wave);
+		newcreep.setType(type, traits, level);
 		creeps.Add(newcreep);
 		go.transform.position = (Vector3)waypoints[0];
 		spawnedCreeps++;
