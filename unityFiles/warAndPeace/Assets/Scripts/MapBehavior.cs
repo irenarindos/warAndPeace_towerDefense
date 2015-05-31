@@ -31,39 +31,17 @@ public class MapBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		wave = 0;
+		if (MainMenu.instance == null)
+		{
+			MainMenu.instance = new PlayerState();
+		}
 		creeps = new List<Creep>();
 		towers = new List<TowerBehavior>();
 		waypoints = new List<Vector2>();
-		waypoints.Add(new Vector2(0f,5f));
-		waypoints.Add(new Vector2(-1f,1.2f));
-		waypoints.Add(new Vector2(-3.6f,0.6f));
-		waypoints.Add(new Vector2(-5.1f,-0.5f));
-
-		waypoints.Add(new Vector2(-3.5f,-2f));
-		waypoints.Add(new Vector2(1f,-2f));
-		waypoints.Add(new Vector2(4f,-2.5f));
-		waypoints.Add(new Vector2(6f,-1.2f));
-		waypoints.Add(new Vector2(11f,-1.2f));
-		spawned = false;
 		groundProperties = new int[50,25];
-		groundProperties[13,16] = 1;
-		groundProperties[14,16] = 1;
-		groundProperties[17,9] = 1;
-		groundProperties[18,9] = 1;
-		groundProperties[19,9] = 1;
-		groundProperties[17,17] = 1;
-		groundProperties[18,17] = 1;
-		groundProperties[18,11] = 1;
-		groundProperties[18,12] = 1;
-		groundProperties[19,11] = 1;
-		groundProperties[19,12] = 1;
-		groundProperties[26,5] = 1;
-		groundProperties[27,5] = 1;
-		groundProperties[31,9] = 1;
-		groundProperties[32,9] = 1;
-		groundProperties[38,6] = 1;
-		groundProperties[39,6] = 1;
-		groundProperties[40,6] = 1;
+
+		MainMenu.instance.level.getMap(waypoints, groundProperties);
+		spawned = false;
 	}
 
 	public TowerBehavior selectedTower;
@@ -90,13 +68,13 @@ public class MapBehavior : MonoBehaviour {
 		if (spawnedCreeps == 0 && spawnedAll)
 		{
 			spawned = false;
-			resources += wave*5;
+			resources += MainMenu.instance.level.getWaveReward(wave); //  wave*5
 			wave++;
 		}
 		if (!spawned)
 		{
 			spawnedAll = false;
-			StartCoroutine("spawnCreeps");
+			StartCoroutine(spawnCreeps());
 			spawned = true;
 		}
 		restext.text = "Resources: " + resources;
@@ -168,66 +146,27 @@ public class MapBehavior : MonoBehaviour {
 
 	IEnumerator spawnCreeps()
 	{
-		int count = 10;
-		int pergroup = 1;
-		int level = wave;
+		if (wave >= MainMenu.instance.level.getWaveCount() && MainMenu.instance.level.getWaveCount() >= 0)
+		{
+			for (int c = 0; c < 10; ++c)
+			{
+				wavecountdowntext.text = "All waves cleared! Return to the lab in " + (10-c);
+				yield return new WaitForSeconds(1);
+			}
+			yield break;
+		}
 		for (int c = 0; c < 5; ++c)
 		{
 			wavecountdowntext.text = "Next wave in " + (5-c);
 			yield return new WaitForSeconds(1);
 		}
 		wavecountdowntext.text = "";
-		if (wave % 8 == 0) count = 15;
-		if (wave % 10 == 0) count = 1;
-		if (wave % 7 == 0) { count = 5; pergroup = 4;  level /= 2; }
-		if (wave % 18 == 0) { count = 4; pergroup = 5; level /= 3; }
-		IList<Creep.CreepTrait> traits = new List<Creep.CreepTrait>();
-		if (wave % 4 == 0) traits.Add(Creep.CreepTrait.FAST);
-		//if (wave % 11 == 0) traits.Add(Creep.CreepTrait.SHIELDED);
-		if (wave % 9 == 0) 
-		{
-			traits.Add(Creep.CreepTrait.PLATED50);
-			level -= 5;
-		}
-		if (wave % 43 == 0)
-		{
-			traits.Add (Creep.CreepTrait.PLATED1);
-			level /= 12;
-		}
-		if (wave % 23 == 0)
-		{
-			traits.Add (Creep.CreepTrait.PLATED10);
-			level /= 7;
-		}
-		if (wave % 17 == 0) traits.Add (Creep.CreepTrait.ENRAGED);
-		if (wave % 10 == 0) count += wave/40;
-		else count += wave/12;
-
-		for (int i = 0; i < count; ++i)
-		{
-			for (int j = 0; j < pergroup; ++ j)
-			{
-				int clevel = level;
-				Creep.CreepType type = Creep.CreepType.NORMAL;
-
-				if (wave % 6 == 0) { type = Creep.CreepType.LARGE; clevel -= 1; }
-				if (wave % 5 == 0 && i %4 == 3) 
-				{ 
-					type = Creep.CreepType.LARGE;
-					if (wave > 10)
-					    clevel -= 3;
-				}
-				if (j%3 == 2 && !traits.Contains(Creep.CreepTrait.ENRAGED)) traits.Add (Creep.CreepTrait.ENRAGED);
-				if (wave % 10 == 0) type = Creep.CreepType.BOSS;
-				spawnCreep(type, traits, clevel);
-				yield return new WaitForSeconds(0.2f);
-			}
-			yield return new WaitForSeconds(1.0f);
-		}
+		yield return StartCoroutine(MainMenu.instance.level.spawnWave(wave, this));
 		spawnedAll = true;
+
 	}
 	
-	void spawnCreep(Creep.CreepType type, IList<Creep.CreepTrait> traits, int level)
+	public void spawnCreep(Creep.CreepType type, Creep.CreepTrait traits, int level)
 	{
 		Creep newcreep;
 		GameObject go = new GameObject();
@@ -279,20 +218,5 @@ public class MapBehavior : MonoBehaviour {
 	{
 
 
-
-		/*else
-		{
-			Vector3 mousePosition = Input.mousePosition;
-			mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-			Vector3 pos = new Vector3(mousePosition.x, mousePosition.y, 0);
-			foreach (TowerBehavior t in towers)
-			{
-				if ((t.gameObject.transform.position - pos).magnitude < 0.15)
-				{
-					t.select();
-				}
-			}
-			
-		}*/
 	}
 }

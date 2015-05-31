@@ -21,7 +21,6 @@ public class SlowEffect : ImpactEffect {
 	{
 		SlowModule mod = target.getModule<SlowModule>();
 		mod.activate(duration, percent);
-
 	}
 }
 

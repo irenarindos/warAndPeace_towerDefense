@@ -29,12 +29,13 @@ public class TowerBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		modules = new List<TowerModule>();
-		addModule<BasicModule>();
-		addModule<GearModule>();
-		addModule<ScopeModule>();
-		addModule<DynamiteModule>();
-		addModule<SteamModule>();
-		addModule<BombModule>();
+		PlayerState s = MainMenu.instance;
+		addModule(new BasicModule(s.getResearch("BasicLevel")));
+		addModule(new GearModule(s.getResearch("GearLevel"), s.getResearch("GearMax")));
+		addModule(new ScopeModule(s.getResearch("ScopeLevel"), s.getResearch("ScopeMax")));
+		addModule(new DynamiteModule(s.getResearch("DynamiteLevel"), s.getResearch("DynamiteMax")));
+		addModule(new SteamModule(s.getResearch("SteamLevel"), s.getResearch("SteamMax")));
+		addModule(new BombModule(s.getResearch("BombLevel"), s.getResearch("BombMax")));
 		lastShot = Time.time;
 
 	    rangeIndicator = new GameObject("range indicator");
@@ -57,12 +58,24 @@ public class TowerBehavior : MonoBehaviour {
 
 	public string getTooltip(int what)
 	{
-		return modules[what].getName() + "; Upgrade cost: " + modules[what].getUpgradeCost();
+		string result = modules[what].getName();
+		if (modules[what].canUpgrade())
+			result += "; Upgrade cost: " + modules[what].getUpgradeCost();
+		return result;
 	}
 
-	void addModule<T>() where T: TowerModule, new()
+	T addModule<T>() where T: TowerModule, new()
 	{
 		T newModule = new T();
+		int i = 0;
+		for (; i < modules.Count && modules[i].getPriority() < newModule.getPriority(); ++i);
+		modules.Insert(i, newModule);
+		newModule.init(this);
+		return newModule;
+	}
+
+	void addModule(TowerModule newModule)
+	{
 		int i = 0;
 		for (; i < modules.Count && modules[i].getPriority() < newModule.getPriority(); ++i);
 		modules.Insert(i, newModule);

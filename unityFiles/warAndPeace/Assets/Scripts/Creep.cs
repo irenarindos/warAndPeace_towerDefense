@@ -1,5 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
+
+public static class CreepTraitHelper
+{
+	public static bool IsSet(this Creep.CreepTrait traits, Creep.CreepTrait flags)
+	{
+		return (traits & flags) == flags;
+	}
+}
 
 public class Creep : MonoBehaviour {
 
@@ -10,15 +19,17 @@ public class Creep : MonoBehaviour {
 		BOSS
 	}
 
+	[Flags]
 	public enum CreepTrait
 	{
-		FAST,
-		SHIELDED,
-		ARMORED,
-		ENRAGED,
-		PLATED50,
-		PLATED10,
-		PLATED1
+		NONE = 0,
+		FAST = 1,
+		SHIELDED = 2,
+		ARMORED = 4, 
+		ENRAGED = 8,
+		PLATED50 = 16,
+		PLATED10 = 32,
+		PLATED1 = 64
 	}
 
 	private const float TARGETDIST = 0.05f;
@@ -307,7 +318,9 @@ public class Creep : MonoBehaviour {
 		}
 	}
 
-	public void setType(CreepType t, IList<CreepTrait> traits, int wave)
+
+
+	public void setType(CreepType t, CreepTrait traits, int wave)
 	{
 		switch (t)
 		{
@@ -321,30 +334,24 @@ public class Creep : MonoBehaviour {
 			
 		}
 		CreepPlating p = null;
-		foreach (CreepTrait trait in traits)
+		if (traits.IsSet(CreepTrait.FAST))     addModule<FastCreep>();
+		if (traits.IsSet(CreepTrait.SHIELDED)) addModule<CreepShield>();
+		if (traits.IsSet(CreepTrait.ARMORED))  addModule<CreepArmor>(); 
+		if (traits.IsSet(CreepTrait.ENRAGED))  addModule<EnrageCreep>();
+		if (traits.IsSet(CreepTrait.PLATED50))	
 		{
-			switch (trait)
-			{
-			case CreepTrait.FAST: addModule<FastCreep>(); break;
-			case CreepTrait.SHIELDED: addModule<CreepShield>(); break;
-			case CreepTrait.ARMORED: addModule<CreepArmor>(); break;
-			case CreepTrait.ENRAGED: addModule<EnrageCreep>(); break;
-			case CreepTrait.PLATED50: 
-				if (p == null) 
-				    p = addModule<CreepPlating>(); 
+			    p = addModule<CreepPlating>(); 
 				p.maximum = 50.0f; 
-				break;
-			case CreepTrait.PLATED10:
-				if (p == null) 
-				    p = addModule<CreepPlating>(); 
+		}
+		else if (traits.IsSet(CreepTrait.PLATED10))
+		{
+			    p = addModule<CreepPlating>(); 
 				p.maximum = 10.0f; 
-				break;
-			case CreepTrait.PLATED1: 
-				if (p == null) 
-				    p = addModule<CreepPlating>();
+		}
+		else if (traits.IsSet(CreepTrait.PLATED1))
+		{
+				p = addModule<CreepPlating>();
 				p.maximum = 1.0f; 
-				break;
-			}
 		}
 	}
 }
