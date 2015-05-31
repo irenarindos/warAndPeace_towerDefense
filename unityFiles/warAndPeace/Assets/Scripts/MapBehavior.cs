@@ -146,13 +146,16 @@ public class MapBehavior : MonoBehaviour {
 
 	IEnumerator spawnCreeps()
 	{
-		if (wave >= MainMenu.instance.level.getWaveCount() && MainMenu.instance.level.getWaveCount() >= 0)
+		if (wave > MainMenu.instance.level.getWaveCount() && MainMenu.instance.level.getWaveCount() >= 0)
 		{
-			for (int c = 0; c < 10; ++c)
+			for (int c = 0; c < 5; ++c)
 			{
-				wavecountdowntext.text = "All waves cleared! Return to the lab in " + (10-c);
+				wavecountdowntext.text = "All waves cleared!\n Return to the lab in " + (5-c);
+				wavecountdowntext.color = new Color(255, 0, 0);
 				yield return new WaitForSeconds(1);
 			}
+			MainMenu.instance.researchCredits += MainMenu.instance.level.getResearchCredits();
+			Application.LoadLevel(2);
 			yield break;
 		}
 		for (int c = 0; c < 5; ++c)

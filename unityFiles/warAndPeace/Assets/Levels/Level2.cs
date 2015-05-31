@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 
 
-public class Level1 : LevelBase {
+public class Level2 : LevelBase {
 	public override IEnumerator spawnWave(int wave, MapBehavior map)
 	{
 		if (wave == 1) yield return map.StartCoroutine(spawnGroup(10, 0.9f, 1, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
@@ -20,7 +20,7 @@ public class Level1 : LevelBase {
 			}
 		}
 		if (wave == 4) yield return map.StartCoroutine(spawnGroup(10, 1.2f, 4, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
-		if (wave == 5) yield return map.StartCoroutine(spawnGroup(10, 1.2f, 5, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
+		if (wave == 5) yield return map.StartCoroutine(spawnGroup(10, 1.2f, 5, Creep.CreepType.NORMAL, Creep.CreepTrait.FAST, map));
 		if (wave == 6) yield return map.StartCoroutine(spawnGroup(12, 1.0f, 6, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
 		if (wave == 7) yield return map.StartCoroutine(spawnGroup(12, 1.0f, 7, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
 		if (wave == 8) 
@@ -33,7 +33,7 @@ public class Level1 : LevelBase {
 				yield return new WaitForSeconds(0.5f);
 			}
 		}
-		if (wave == 9) yield return map.StartCoroutine(spawnGroup(12, 1.0f, 10, Creep.CreepType.NORMAL, Creep.CreepTrait.NONE, map));
+		if (wave == 9) yield return map.StartCoroutine(spawnGroup(12, 1.0f, 10, Creep.CreepType.NORMAL, Creep.CreepTrait.FAST, map));
 		if (wave == 10) yield return map.StartCoroutine(spawnGroup(1, 1.0f, 12, Creep.CreepType.BOSS, Creep.CreepTrait.NONE, map));
 	}
 	
@@ -46,12 +46,12 @@ public class Level1 : LevelBase {
 	{
 		return 20;
 	}
-
+	
 	public override float getResearchCredits()
 	{
 		return 50;
 	}
-
+	
 	public override string getSuccessor()
 	{
 		return "level2";

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PlayerState 
 {
 	public LevelBase level;
+	public float researchCredits;
 	private IDictionary<string, float> research;
 
 	public PlayerState()
@@ -14,9 +15,20 @@ public class PlayerState
 		level = LevelBase.getLevel("infinite1");
 	}
 
+	public bool upgradeTech(string name)
+	{
+		if (researchCredits >= getResearchCost(name))
+		{
+			researchCredits -= getResearchCost(name);
+			research[name] = research[name] + 1;
+			return true;
+		}
+		return false;
+	}
+
 	public void initResearch()
 	{
-		research["BasicLevel"] = 0;
+		research["BasicLevel"] = 1;
 		research["GearLevel"] = 0;
 		research["GearMax"] = 1;
 		research["ScopeLevel"] = 0;

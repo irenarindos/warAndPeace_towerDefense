@@ -9,3 +9,5 @@ EditorBuildSettings:
     path: Assets/Scenes/mainmenu.unity
   - enabled: 1
     path: Assets/Scenes/prototypeScene.unity
+  - enabled: 1
+    path: Assets/Scenes/lab.unity

@@ -9,6 +9,7 @@ public class LevelBase  {
 	{
 		levels = new Dictionary<string, LevelBase>();
 		levels.Add("level1", new Level1());
+		levels.Add("level2", new Level2());
 		levels.Add("infinite1", new InfiniteLevel());
 		levels.Add("", new LevelBase()); // blank level is dummy that doesn't do anything
 	}

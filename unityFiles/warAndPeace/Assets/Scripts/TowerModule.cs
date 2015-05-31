@@ -109,7 +109,7 @@ public class ScopeModule : TowerModule  {
 	
 	override public bool canUpgrade()
 	{
-		return (this.level < this.maxlevel);
+		return (this.level < this.maxlevel) || maxlevel < 0;
 	}
 	
 	override public int getUpgradeCost()
@@ -135,6 +135,12 @@ public class BombModule : TowerModule  {
 	{
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
+		calcPercent();
+	}
+
+	void calcPercent()
+	{
+		percent = 0.5f + Mathf.Pow (1.4f, level) - level*0.15f;
 	}
 
 	override public float getDamage(float damage)
@@ -146,13 +152,12 @@ public class BombModule : TowerModule  {
 	override public void upgrade()
 	{
 		level++;
-		percent = 0.5f + Mathf.Pow (1.4f, level) - level*0.15f;
-
+		calcPercent();
 	}
 	
 	override public bool canUpgrade()
 	{
-		return (level < maxlevel);
+		return (this.level < this.maxlevel) || maxlevel < 0;
 	}
 	
 	override public int getUpgradeCost()
@@ -178,6 +183,12 @@ public class GearModule : TowerModule  {
 	{
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
+		calcPercent();
+	}
+
+	void calcPercent()
+	{
+		percent = Mathf.Pow (0.7f, level/7.0f);
 	}
 	
 	override public float getShootDelay(float delay)
@@ -188,12 +199,12 @@ public class GearModule : TowerModule  {
 	override public void upgrade()
 	{
 		level++;
-		percent = Mathf.Pow (0.7f, level/7.0f);
+		calcPercent();
 	}
 	
 	override public bool canUpgrade()
 	{
-		return (level < maxlevel);
+		return (this.level < this.maxlevel) || maxlevel < 0;
 	}
 	
 	override public int getUpgradeCost()
@@ -220,17 +231,23 @@ public class SteamModule : TowerModule  {
 	{
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
+		calcPercent();
+	}
+
+	void calcPercent()
+	{
+		percent = Mathf.Pow (0.75f, level/7.0f) - 0.1f;
 	}
 	
 	override public void upgrade()
 	{
 		level++;
-		percent = Mathf.Pow (0.75f, level/7.0f) - 0.1f;
+		calcPercent();
 	}
 	
 	override public bool canUpgrade()
 	{
-		return (level < maxlevel);
+		return (this.level < this.maxlevel) || maxlevel < 0;
 	}
 	
 	override public int getUpgradeCost()
@@ -265,18 +282,24 @@ public class DynamiteModule : TowerModule  {
 	{
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
+		calcPercent();
+	}
+
+	void calcPercent()
+	{
+		percent = 1.2f - Mathf.Pow (0.7f, level/4.0f);
+		radius = 0.3f + 0.2f * level;
 	}
 	
 	override public void upgrade()
 	{
 		level++;
-		percent = 1.2f - Mathf.Pow (0.7f, level/4.0f);
-		radius = 0.3f + 0.2f * level;
+		calcPercent();
 	}
 	
 	override public bool canUpgrade()
 	{
-		return (level < maxlevel);
+		return (this.level < this.maxlevel) || maxlevel < 0;
 	}
 	
 	override public int getUpgradeCost()
