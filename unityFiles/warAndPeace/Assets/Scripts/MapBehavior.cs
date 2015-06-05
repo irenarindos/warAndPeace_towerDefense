@@ -14,7 +14,7 @@ public class MapBehavior : MonoBehaviour {
 	bool spawned;
 	public Sprite creepsprite;
 	public float SPAWNDELAY;
-	public int resources = 150;
+	public int resources = 100;
 	public Text restext;
 	public Text towertext;
 	public Text lifewavetext;
@@ -31,10 +31,12 @@ public class MapBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		wave = 0;
+
 		if (MainMenu.instance == null)
 		{
 			MainMenu.instance = new PlayerState();
 		}
+		resources = MainMenu.instance.level.getStartingResources();
 		creeps = new List<Creep>();
 		towers = new List<TowerBehavior>();
 		waypoints = new List<Vector2>();

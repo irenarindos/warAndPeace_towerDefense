@@ -91,20 +91,27 @@ public class ScopeModule : TowerModule  {
 	private int maxlevel;
 	public ScopeModule(float level, float maxlevel)
 	{
+		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
+		percent = calcPercent(level);
+	}
+
+	float calcPercent(float level)
+	{
+		if (level > 0) return Mathf.Pow(1.15f, level) - level*0.1f;
+		return 1.0f;
 	}
 
 	override public float getRange(float range)
 	{
 		return range*percent;
 	}
-	
 
 	override public void upgrade()
 	{
 		level++;
-		percent = Mathf.Pow(1.15f, level) - level*0.1f;
+		percent = calcPercent(level);
 	}
 	
 	override public bool canUpgrade()
@@ -120,7 +127,7 @@ public class ScopeModule : TowerModule  {
 	override public string getName()
 	{
 		if (canUpgrade ())
-		    return "Scope (range; upgrade to " + Mathf.Round(10*tower.RANGE*(Mathf.Pow(1.15f, level+1) - (level+1)*0.1f))/10  +  " units)";
+		    return "Scope (range; upgrade to " + Mathf.Round(10*tower.RANGE*calcPercent(level+1))/10  +  " units)";
 		return "Scope (range; maximum level reached)";
 	}
 }
@@ -133,14 +140,19 @@ public class BombModule : TowerModule  {
 	private int maxlevel;
 	public BombModule(float level, float maxlevel)
 	{
+		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
-		calcPercent();
+		percent = calcPercent(level);
 	}
 
-	void calcPercent()
+	float calcPercent(float level)
 	{
-		percent = 0.5f + Mathf.Pow (1.4f, level) - level*0.15f;
+		float result = 1.0f;
+		if (level > 0)
+		    result = 0.35f + Mathf.Pow (1.45f, level) - level*0.15f;
+		return result;
+
 	}
 
 	override public float getDamage(float damage)
@@ -152,7 +164,7 @@ public class BombModule : TowerModule  {
 	override public void upgrade()
 	{
 		level++;
-		calcPercent();
+		percent = calcPercent(level);
 	}
 	
 	override public bool canUpgrade()
@@ -168,7 +180,7 @@ public class BombModule : TowerModule  {
 	override public string getName()
 	{
 		if (canUpgrade())
-		    return "Bomb (damage; upgrade to " + Mathf.Round(tower.DAMAGE*(0.5f + Mathf.Pow (1.4f, level+1) - (level+1)*0.15f )) + " dmg)";
+		    return "Bomb (damage; upgrade to " + Mathf.Round(tower.DAMAGE*calcPercent (level+1)) + " dmg)";
 		return "Bomb (damage; maximum level reached)";
 	}
 }
@@ -181,6 +193,7 @@ public class GearModule : TowerModule  {
 	private int maxlevel;
 	public GearModule(float level, float maxlevel)
 	{
+		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
 		calcPercent();
@@ -216,7 +229,7 @@ public class GearModule : TowerModule  {
 	{
 		if (canUpgrade())
 		    return "Gear (attack delay; upgrade to: " + Mathf.Round(100*tower.SHOOTDELAY * Mathf.Pow (0.7f, (level + 1)/7.0f))/100 + "s delay)";
-		return "Gear (attack delay; maximum level " + level + " of " + maxlevel + " reached)";
+		return "Gear (attack delay; maximum level reached)";
 	}
 }
 
@@ -229,20 +242,23 @@ public class SteamModule : TowerModule  {
 	private int maxlevel;
 	public SteamModule(float level, float maxlevel)
 	{
+		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
-		calcPercent();
+		percent = calcPercent(level);
 	}
 
-	void calcPercent()
+	float calcPercent(float level)
 	{
-		percent = Mathf.Pow (0.75f, level/7.0f) - 0.1f;
+		if (level > 0)
+		  return Mathf.Pow (0.75f, level/7.0f) - 0.1f;
+		return 1.0f;
 	}
 	
 	override public void upgrade()
 	{
 		level++;
-		calcPercent();
+		percent = calcPercent(level);
 	}
 	
 	override public bool canUpgrade()
@@ -264,8 +280,60 @@ public class SteamModule : TowerModule  {
 	override public string getName()
 	{
 		if (canUpgrade())
-		    return "Steam (slows creeps; currently by " + Mathf.Round((1-percent)*100) + " %; upgrade to increase to " + Mathf.Round((1-(Mathf.Pow (0.75f, (level+1)/7.0f) - 0.1f))*100) + "%)";
+		    return "Steam (slows creeps; currently by " + Mathf.Round((1-percent)*100) + " %; upgrade to increase to " + Mathf.Round((1-calcPercent(level+1))*100) + "%)";
 		return "Steam (slows creeps by " + Mathf.Round((1-percent)*100) + " %; maximum level reached)";
+	}
+}
+
+// gain energy from hitting creeps
+public class EnergyDrainModule : TowerModule  
+{
+	private int level = 0;
+	private int maxlevel;
+	public EnergyDrainModule(float level, float maxlevel)
+	{
+		if (level < 0) level = 0;
+		this.level = Mathf.RoundToInt(level);
+		this.maxlevel = Mathf.RoundToInt(maxlevel);
+	}
+	
+	float calcAmount(float level)
+	{
+		return level;
+	}
+	
+	override public void upgrade()
+	{
+		level++;
+	}
+
+	override public int getPriority()
+	{
+		return 12;
+	}
+	
+	override public bool canUpgrade()
+	{
+		return (this.level < this.maxlevel) || maxlevel < 0;
+	}
+	
+	override public int getUpgradeCost()
+	{
+		return Mathf.RoundToInt((Mathf.Pow(1.9f, level) - 0.45f*level)*70);
+	}
+	
+	override public void getImpactEffect(IList<ImpactEffect> effects)
+	{
+		if (level > 0)
+			effects.Add(new MoneyEffect(calcAmount(level)));
+	}
+	
+	override public string getName()
+	{
+		if (canUpgrade())
+			return "Energy Drain (get resources for hitting creeps; currently gains " + calcAmount(level) + "; upgrade to get " + calcAmount(level+1) + " per hit)";
+		return "Energy Drain (get " + calcAmount(level) + " resources for each creep hit; maximum level reached)";
+
 	}
 }
 
@@ -280,6 +348,7 @@ public class DynamiteModule : TowerModule  {
 	private int maxlevel;
 	public DynamiteModule(float level, float maxlevel)
 	{
+		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
 		this.maxlevel = Mathf.RoundToInt(maxlevel);
 		calcPercent();

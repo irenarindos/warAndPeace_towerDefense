@@ -20,7 +20,7 @@ public class LabBehavior : MonoBehaviour {
 	public void updateLevels()
 	{
 		string[] names = {"BasicLevel", "BombLevel", "SteamLevel", "ScopeLevel", "GearLevel", "DynamiteLevel",
-			"BombMax", "SteamMax", "ScopeMax", "GearMax", "DynamiteMax"};
+			"BombMax", "SteamMax", "ScopeMax", "GearMax", "DynamiteMax", "EnergyDrainLevel", "EnergyDrainMax"};
 		foreach (string name in names)
 		{
 			GameObject obj = GameObject.Find("Canvas/" + name);

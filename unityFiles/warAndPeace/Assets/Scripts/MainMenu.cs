@@ -39,6 +39,8 @@ public class PlayerState
 		research["SteamMax"] = 0;
 		research["BombLevel"] = 0;
 		research["BombMax"] = 1;
+		research["EnergyDrainLevel"] = 0;
+		research["EnergyDrainMax"] = 0;
 	}
 
 	public float getResearch(string name)

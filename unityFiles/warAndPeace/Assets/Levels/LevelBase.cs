@@ -24,6 +24,11 @@ public class LevelBase  {
 		return "";
 	}
 
+	public virtual int getStartingResources()
+	{
+		return 100;
+	}
+
 	public virtual void getMap(IList<Vector2> waypoints, int[,] groundProperties)
 	{
 		waypoints.Add(new Vector2(0f,5f));

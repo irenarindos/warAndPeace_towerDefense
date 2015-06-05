@@ -24,6 +24,23 @@ public class SlowEffect : ImpactEffect {
 	}
 }
 
+public class MoneyEffect : ImpactEffect {
+	private float amount;
+	
+	public MoneyEffect(float amount)
+	{
+		this.amount = amount;
+	}
+	
+	public override void apply(Creep target, TowerBehavior source)
+	{
+		if (!target.dead)
+		{
+		    source.map.resources += Mathf.RoundToInt(amount);
+		}
+	}
+}
+
 public class SplashDamageEffect : ImpactEffect {
 	private float radius;
 	private float damage;
