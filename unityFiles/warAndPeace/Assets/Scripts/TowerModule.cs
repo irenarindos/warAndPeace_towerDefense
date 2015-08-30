@@ -133,12 +133,12 @@ public class ScopeModule : TowerModule  {
 }
 
 // increase damage
-public class BombModule : TowerModule  {
+public class PowerIncreaseModule : TowerModule  {
 	
 	private float percent = 1.0f;
 	private int level = 0;
 	private int maxlevel;
-	public BombModule(float level, float maxlevel)
+	public  PowerIncreaseModule(float level, float maxlevel)
 	{
 		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
@@ -180,8 +180,8 @@ public class BombModule : TowerModule  {
 	override public string getName()
 	{
 		if (canUpgrade())
-		    return "Bomb (damage; upgrade to " + Mathf.Round(tower.DAMAGE*calcPercent (level+1)) + " dmg)";
-		return "Bomb (damage; maximum level reached)";
+			return " Power Increase (damage; upgrade to " + Mathf.Round(tower.DAMAGE*calcPercent (level+1)) + " dmg)";
+		return " Power Increase (damage; maximum level reached)";
 	}
 }
 
@@ -338,7 +338,7 @@ public class EnergyDrainModule : TowerModule
 }
 
 // splash damage
-public class DynamiteModule : TowerModule  {
+public class ChainLightningModule : TowerModule  {
 	
 	private float percent = 0f;
 	private float radius = 0.0f;
@@ -346,7 +346,7 @@ public class DynamiteModule : TowerModule  {
 	
 	private int level = 0;
 	private int maxlevel;
-	public DynamiteModule(float level, float maxlevel)
+	public ChainLightningModule(float level, float maxlevel)
 	{
 		if (level < 0) level = 0;
 		this.level = Mathf.RoundToInt(level);
@@ -395,7 +395,7 @@ public class DynamiteModule : TowerModule  {
 	override public string getName()
 	{
 		if (canUpgrade())
-			return "Dynamite (" + Mathf.Round(percent*100) + " % splash damage in a " + Mathf.Round(radius*10)/10 + " radius; upgrade for " + Mathf.Round((1.2f - Mathf.Pow (0.7f, (level+1)/4.0f))*100) + "% in a " + Mathf.Round((0.3f + 0.2f * (level+1))*10)/10 + " radius)";
-		return "Dynamite (" + Mathf.Round(percent*100) + " % splash damage in a " + Mathf.Round(radius*10)/10 + " radius; maximum level reached)";
+			return "Chain Lightning (" + Mathf.Round(percent*100) + " % splash damage in a " + Mathf.Round(radius*10)/10 + " radius; upgrade for " + Mathf.Round((1.2f - Mathf.Pow (0.7f, (level+1)/4.0f))*100) + "% in a " + Mathf.Round((0.3f + 0.2f * (level+1))*10)/10 + " radius)";
+		return "Chain Lightning (" + Mathf.Round(percent*100) + " % splash damage in a " + Mathf.Round(radius*10)/10 + " radius; maximum level reached)";
 	}
 }

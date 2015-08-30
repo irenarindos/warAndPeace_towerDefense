@@ -32,11 +32,11 @@ public class TowerBehavior : MonoBehaviour {
 		PlayerState s = MainMenu.instance;
 		addModule(new BasicModule(s.getResearch("BasicLevel")));
 		addModule(new EnergyDrainModule(s.getResearch("EnergyDrainLevel"), s.getResearch("EnergyDrainMax")));
-		addModule(new DynamiteModule(s.getResearch("DynamiteLevel"), s.getResearch("DynamiteMax")));
+		addModule(new ChainLightningModule(s.getResearch("DynamiteLevel"), s.getResearch("DynamiteMax")));
 		addModule(new SteamModule(s.getResearch("SteamLevel"), s.getResearch("SteamMax")));
 		addModule(new ScopeModule(s.getResearch("ScopeLevel"), s.getResearch("ScopeMax")));
 		addModule(new GearModule(s.getResearch("GearLevel"), s.getResearch("GearMax")));
-		addModule(new BombModule(s.getResearch("BombLevel"), s.getResearch("BombMax")));
+		addModule(new PowerIncreaseModule(s.getResearch("BombLevel"), s.getResearch("BombMax")));
 		lastShot = Time.time;
 
 	    rangeIndicator = new GameObject("range indicator");
